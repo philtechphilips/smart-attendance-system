@@ -2,20 +2,85 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+@font-face {
+  font-family: "Satoshi";
+  font-weight: 400;
+  src: url("../assets/fonts/Satoshi-Regular.otf") format("opentype");
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+@font-face {
+  font-family: "Satoshi";
+  font-weight: 700;
+  src: url("../assets/fonts/Satoshi-Bold.otf") format("opentype");
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  overflow-x: hidden;
 }
 
 body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family:
+    "Satoshi",
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    Roboto,
+    "Helvetica Neue",
+    Arial,
+    "Noto Sans",
+    sans-serif;
+  font-weight: 400;
+}
+
+#checkbox[type="checkbox"] {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  border: none;
+  outline: none;
+}
+
+#checkbox[type="checkbox"]::before {
+  content: "";
+  display: inline-block;
+  width: 32px;
+  height: 32px;
+  border-radius: 2px;
+  background: #ffffff;
+}
+
+/* Style the checkbox when checked */
+#checkbox[type="checkbox"]:checked::before {
+  background-color: white;
+  content: "√";
+  font-family: "Font Awesome 5 Free";
+  color: black;
+  font-size: 16px;
+  text-align: center;
+  line-height: 40px;
+  outline: 1px solid #239fac;
+}
+
+/* Apply to the entire page or a specific element */
+::-webkit-scrollbar {
+  width: 5px; /* Set the width of the scrollbar */
+  height: 5px; /* Set the height of the scrollbar (for horizontal scrolling) */
+}
+
+::-webkit-scrollbar-thumb {
+  background: #888; /* Color of the scrollbar thumb */
+  border-radius: 10px; /* Rounded corners */
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #555; /* Darker color on hover */
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1; /* Background of the scrollbar track */
+  border-radius: 10px; /* Rounded corners */
 }

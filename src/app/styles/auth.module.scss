@@ -1,0 +1,187 @@
+// $primary-color: #64ff00;
+
+.main {
+  display: flex;
+  height: 100%;
+  scroll-snap-type: y var(--tw-scroll-snap-strictness);
+  gap: 9rem;
+  width: 100%;
+  .left__pane {
+    scroll-snap-align: start;
+    background: linear-gradient(50.5deg, #000000 9.24%, #014f57 140.18%);
+    border-top-right-radius: 20px;
+    border-bottom-right-radius: 20px;
+    width: 568px;
+    .animation__container {
+      max-width: 42rem;
+      margin-left: auto;
+      margin-right: auto;
+      padding-top: 4rem;
+      padding-bottom: 10rem;
+      padding-left: 68px;
+      padding-right: 68px;
+    }
+    .title {
+      margin-top: 10rem;
+      color: #fff;
+    }
+    .subtitle {
+      margin-top: 2rem;
+      font-size: 16px;
+      line-height: 1.5rem;
+      margin-bottom: 176px;
+    }
+  }
+
+  .right__pane {
+    scroll-snap-align: start;
+    flex: 1 1 auto;
+  }
+}
+
+.signup_container,
+.signin_container {
+  margin-top: 0px !important;
+  margin-bottom: 40px;
+  padding: 40px 120px;
+  @media (max-width: 768px) {
+    padding: 40px 20px;
+  }
+  .google {
+    width: 185px;
+    height: 36px;
+    display: flex;
+    margin-top: 40px;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    padding: 0px 16px 0px 8px;
+    gap: 8px;
+    background: #f8fafc;
+    border-radius: 2px;
+    font-style: normal;
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 20px;
+    text-align: center;
+    color: #334155;
+    font-family: "Satoshi";
+  }
+  .divider {
+    margin-top: 58px;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 58px;
+    width: 425px;
+    height: 1px;
+    background: #f0f0f0;
+    @media (max-width: 768px) {
+      width: 100%;
+    }
+    p {
+      font-family: "Satoshi";
+      font-style: normal;
+      font-weight: 400;
+      font-size: 16px;
+      line-height: 20px;
+      text-align: center;
+      color: #acacac;
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      background-color: white;
+      padding: 10px;
+    }
+  }
+  form {
+    width: 539px;
+    @media (max-width: 768px) {
+      width: 90vw;
+    }
+    .forgot_password {
+      width: 100%;
+      height: 16px;
+      font-family: "Satoshi";
+      font-style: normal;
+      font-weight: 700;
+      font-size: 12px;
+      line-height: 16px;
+      color: #4253f0;
+      text-align: right;
+      margin-bottom: 32px;
+    }
+  }
+}
+
+.signin_container {
+  margin-top: 120px;
+}
+
+.testimonial {
+  width: 433px;
+  height: 226px;
+  left: 0px;
+  top: 0px;
+  background: rgba(38, 51, 73, 0.21);
+  box-shadow: 0px 3px 32px rgba(11, 18, 29, 0.43);
+  border-radius: 10px;
+  padding: 32px 35px;
+}
+
+.slick-prev,
+.slick-next {
+  display: none !important;
+}
+
+.slick-dots {
+  bottom: -75px !important;
+}
+
+.passwordStrengthContainer {
+  display: flex;
+  align-items: baseline;
+  gap: 22px;
+  .passwordStrengthLabel {
+    font-family: "Satoshi";
+    font-style: normal;
+    font-weight: 400;
+    font-size: 12px;
+    line-height: 16px;
+    color: #acacac;
+  }
+  .passwordStrengthMeter {
+    display: flex;
+    gap: 2px;
+    margin-bottom: 10px;
+  }
+
+  .passwordStrengthBar {
+    width: 60px;
+    height: 3px;
+    background-color: #d3d3d3;
+    border-radius: 2px;
+  }
+}
+
+.bridge {
+  margin-top: -24px;
+}
+
+.right {
+  padding-right: 142px;
+  padding-top: 40px;
+  position: relative;
+  text-align: right;
+}
+
+.new_user {
+  font-family: Satoshi;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 16.2px;
+  text-align: left;
+  color: #acacac;
+  margin-top: 32px;
+}
