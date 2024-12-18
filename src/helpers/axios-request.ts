@@ -14,7 +14,7 @@ interface HeaderType {
 }
 export const API_URL = process.env.NEXT_PUBLIC_BASE_URL
   ? process.env.NEXT_PUBLIC_BASE_URL
-  : "https://apimdevtech.azure-api.net/smartsafetydev/";
+  : "";
 
 const HEADERS = {
   ...authHeader(),
