@@ -12,13 +12,15 @@ type AuthLayoutProps = {
 export default function AuthLayout({ children, pageTitle }: AuthLayoutProps) {
   const router = useRouter();
 
-  const {user: userData, isLoggedIn } = useAppSelector((state:RootState)=> state.auth);
+  const { user: userData, isLoggedIn } = useAppSelector(
+    (state: RootState) => state.auth,
+  );
 
-  useEffect(()=>{
-    if(isLoggedIn && userData) {
-      router.push("/dashboard/home")
-    } 
-  }, [userData, isLoggedIn])
+  useEffect(() => {
+    if (isLoggedIn && userData) {
+      router.push("/dashboard/home");
+    }
+  }, [userData, isLoggedIn]);
 
   return (
     <main className={styles.main}>

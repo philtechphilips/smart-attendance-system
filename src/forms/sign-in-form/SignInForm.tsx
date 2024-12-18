@@ -9,13 +9,13 @@ import { RootState, useAppDispatch, useAppSelector } from "@/reducer/store";
 import { login } from "@/reducer/actions/auth.dispatcher";
 import toast from "react-toastify";
 
-
-
 export default function SignInForm() {
   const router = useRouter();
-  const dispatch = useAppDispatch()
-  const {user: userData, isLoggedIn } = useAppSelector((state:RootState)=> state.auth)
-  const [loading, setLoading] = useState(false)
+  const dispatch = useAppDispatch();
+  const { user: userData, isLoggedIn } = useAppSelector(
+    (state: RootState) => state.auth,
+  );
+  const [loading, setLoading] = useState(false);
   const [user, setUser] = useState({
     email: "",
     password: "",
@@ -27,20 +27,21 @@ export default function SignInForm() {
   };
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
-    setLoading(true)
+    setLoading(true);
     event.preventDefault();
     if (user.email && user.password) {
-      const result = await dispatch(login({ email: user.email, password: user.password }))
-      if(result){
-        const parseResult = JSON.parse(JSON.stringify(result?.payload))
-      const token = parseResult?.token
-      localStorage.setItem('token', token);
+      const result = await dispatch(
+        login({ email: user.email, password: user.password }),
+      );
+      if (result) {
+        const parseResult = JSON.parse(JSON.stringify(result?.payload));
+        const token = parseResult?.token;
+        localStorage.setItem("token", token);
       }
-      setLoading(false)
-     if(result?.type?.includes('rejected')){
-        setLoading(false)
-     }
-      
+      setLoading(false);
+      if (result?.type?.includes("rejected")) {
+        setLoading(false);
+      }
     }
   };
   return (
@@ -61,8 +62,8 @@ export default function SignInForm() {
           type="text"
           value={user.email}
           showCancelIcon={Boolean(user.email)}
-              handleChange={handleChange}
-              handleCancelClick={() => setUser({ ...user, email: "" })}
+          handleChange={handleChange}
+          handleCancelClick={() => setUser({ ...user, email: "" })}
         />
 
         <TextInput
@@ -77,7 +78,7 @@ export default function SignInForm() {
           <p className={styles.forgot_password}>Forgot password?</p>
         </LinkButton>
 
-        <BaseButton type="submit"  fit disabled={loading}>
+        <BaseButton type="submit" fit disabled={loading}>
           Login
         </BaseButton>
 

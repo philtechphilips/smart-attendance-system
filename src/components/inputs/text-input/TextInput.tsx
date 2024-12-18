@@ -1,9 +1,9 @@
-import React, {  ChangeEventHandler, useState } from "react";
+import React, { ChangeEventHandler, useState } from "react";
 import Image from "next/image";
 import EyeIcon from "@/components/icons/EyeIcon";
 import CancelIcon from "@/components/icons/CancelIcon";
 
-interface InputProps  {
+interface InputProps {
   label: string;
   type: string;
   name?: string;
@@ -42,7 +42,7 @@ const TextInput = ({
           className="w-full px-4 h-14 rounded border border-gray-300 focus:outline-none focus:border-[#D69E77]"
           type={showPassword ? "text" : type}
           name={name}
-          value={value ?? ''}
+          value={value ?? ""}
           placeholder={placeholder}
           onChange={handleChange}
           disabled={disabled}
@@ -58,7 +58,10 @@ const TextInput = ({
           </div>
         )}
         {showCancelIcon && (
-          <div className="absolute inset-y-0 right-0 flex items-center pr-4 cursor-pointer" onClick={handleCancelClick}>
+          <div
+            className="absolute inset-y-0 right-0 flex items-center pr-4 cursor-pointer"
+            onClick={handleCancelClick}
+          >
             <CancelIcon />
           </div>
         )}

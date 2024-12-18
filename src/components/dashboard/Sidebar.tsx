@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import React, { useEffect, useState } from "react";
 import "remixicon/fonts/remixicon.css";
 import Link from "next/link";
@@ -13,7 +13,7 @@ import { logout } from "@/reducer/actions/auth.dispatcher";
 const Sidebar = () => {
   // const { open, toggleOpen } = navStore();
   const user = useAppSelector((state: RootState) => state.auth.user);
-  const dispatch = useAppDispatch()
+  const dispatch = useAppDispatch();
   const currentPath = usePathname();
   const router = useRouter();
 
@@ -25,10 +25,10 @@ const Sidebar = () => {
   const open = true;
 
   useEffect(() => {
-    if(!user){
+    if (!user) {
       router.push("/auth/sign-in");
     }
-  }, [])
+  }, []);
   return (
     <aside
       className={`w-60 bg-[#F9F9FA] border-r h-screen fixed top-0 left-0 z-[1000] transition-transform duration-300 ease-in-out 
