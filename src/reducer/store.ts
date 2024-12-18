@@ -3,6 +3,7 @@ import { TypedUseSelectorHook, useDispatch, useSelector } from "react-redux";
 import { persistStore, persistReducer, PURGE } from "redux-persist";
 import storage from "redux-persist/lib/storage";
 import authReducer from "./slice/auth.slice";
+import navReducer from "./slice/nav.slice";
 
 const persistConfig = {
   key: "root",
@@ -11,6 +12,7 @@ const persistConfig = {
 
 export const rootReducers = combineReducers({
   auth: authReducer,
+  navigation: navReducer,
 });
 const persistedReducer = persistReducer(persistConfig, rootReducers);
 //@ts-ignore

@@ -1,13 +1,49 @@
 "use client";
-
-import { IMG_GoogleSvg } from "@/assets/images/index";
+import { useRouter } from "next/navigation";
+import { FormEvent, useState } from "react";
 import TextInput from "@/components/inputs/text-input/TextInput";
 import styles from "../../app/styles/auth.module.scss";
 import LinkButton from "@/components/buttons/link-button/LinkButton";
 import BaseButton from "@/components/buttons/base-button/BaseButton";
-import Image from "../../../node_modules/next/image";
+import { RootState, useAppDispatch, useAppSelector } from "@/reducer/store";
+import { login } from "@/reducer/actions/auth.dispatcher";
+import toast from "react-toastify";
 
 export default function SignInForm() {
+  const router = useRouter();
+  const dispatch = useAppDispatch();
+  const { user: userData, isLoggedIn } = useAppSelector(
+    (state: RootState) => state.auth,
+  );
+  const [loading, setLoading] = useState(false);
+  const [user, setUser] = useState({
+    email: "",
+    password: "",
+  });
+
+  const handleChange = (event: any) => {
+    const { name, value } = event.target;
+    setUser({ ...user, [name]: value });
+  };
+
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
+    setLoading(true);
+    event.preventDefault();
+    if (user.email && user.password) {
+      const result = await dispatch(
+        login({ email: user.email, password: user.password }),
+      );
+      if (result) {
+        const parseResult = JSON.parse(JSON.stringify(result?.payload));
+        const token = parseResult?.token;
+        localStorage.setItem("token", token);
+      }
+      setLoading(false);
+      if (result?.type?.includes("rejected")) {
+        setLoading(false);
+      }
+    }
+  };
   return (
     <div className={styles.signin_container}>
       <section>
@@ -19,35 +55,30 @@ export default function SignInForm() {
         </p>
       </section>
 
-      <form onSubmit={() => {}}>
+      <form onSubmit={handleSubmit}>
         <TextInput
-          id="email"
           label="Email Address"
           name="email"
-          labelColor
-          value=""
-          onChange={() => {}}
-          validationTrigger={""}
-          validation={""}
+          type="text"
+          value={user.email}
+          showCancelIcon={Boolean(user.email)}
+          handleChange={handleChange}
+          handleCancelClick={() => setUser({ ...user, email: "" })}
         />
 
         <TextInput
-          id="password"
           label="Password"
           name="password"
           type="password"
-          labelColor
-          value={""}
-          onChange={() => {}}
-          validationTrigger={""}
-          validation={""}
+          value={user.password}
+          handleChange={handleChange}
         />
 
         <LinkButton href={"/auth/forgot-password"}>
           <p className={styles.forgot_password}>Forgot password?</p>
         </LinkButton>
 
-        <BaseButton type="submit" fit disabled={true}>
+        <BaseButton type="submit" fit disabled={loading}>
           Login
         </BaseButton>
 

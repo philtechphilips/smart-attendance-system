@@ -6,6 +6,7 @@ import { Provider } from "react-redux";
 import { PersistGate } from "redux-persist/integration/react";
 import { persistor, RootState, store } from "@/reducer/store";
 import { Store } from "@reduxjs/toolkit";
+import { ToastContainer } from "react-toastify";
 
 // export const metadata: Metadata = {
 //   title: "Create Next App",
@@ -23,6 +24,7 @@ export default function RootLayout({
         <Provider store={store as Store<RootState>}>
           <PersistGate loading={null} persistor={persistor}>
             {children}
+            <ToastContainer />
           </PersistGate>
         </Provider>
       </body>

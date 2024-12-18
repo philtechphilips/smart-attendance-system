@@ -7,7 +7,7 @@
 // } from '../utils/constant'
 
 import { ToastStatus } from "@/types/User";
-import { toast } from "react-hot-toast";
+import { toast } from "react-toastify";
 
 // export const formatDate = (date_string: string, formatString?: string) => {
 //     let formatted_date = ''
@@ -43,8 +43,12 @@ export const customToast = (
   timeout: number = 5000,
 ) => {
   if (!status || !message) return null;
-  toast(message, {
+  toast[status](message, {
     position: "top-right",
+    autoClose: timeout,
+    hideProgressBar: false,
+    closeOnClick: true,
+    theme: "light",
   });
 };
 

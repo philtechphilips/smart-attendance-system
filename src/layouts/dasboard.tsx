@@ -2,8 +2,8 @@
 import { useRouter } from "next/navigation";
 import Navbar from "@/components/dashboard/Navbar";
 import Sidebar from "@/components/dashboard/Sidebar";
-import React, { ReactNode, ReactElement, useEffect, useState } from "react";
-import toast, { Toaster } from "react-hot-toast";
+import React, { ReactNode } from "react";
+import { ToastContainer } from "react-toastify";
 
 type DashboardLayoutProps = {
   children: ReactNode;
@@ -28,7 +28,7 @@ export default function DashboardLayout({
         <Navbar pageTitle={pageTitle} />
         <div className="w-full">{children}</div>
       </div>
-      <Toaster />
+      <ToastContainer />
     </main>
   );
 }

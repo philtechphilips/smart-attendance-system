@@ -5,14 +5,10 @@ export interface User {
 
 export interface UserType {
   id: string;
-  name: string;
+  firstname: string;
   email: string;
-  site: {
-    name: string;
-    number: string;
-  };
-  siteMaps: { siteId: string; siteName: string }[];
-  region: string;
+  lastname: string;
+  role: string;
 }
 export type Period = "Week" | "Month" | "Year" | "Custom DATE";
 
