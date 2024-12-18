@@ -1,23 +1,25 @@
 import React, { useEffect, useState } from "react";
 import "remixicon/fonts/remixicon.css";
 import Link from "next/link";
-import useUserStore from "@/store/userStore";
+// import useUserStore from "@/store/userStore";
 import { usePathname, useRouter } from "next/navigation";
 import styles from "../../app/styles/dashboard.module.scss";
 import { SIDEBAR } from "@/constants/dashboard";
 import { COLOURS } from "@/constants/colors";
-import { navStore } from "@/store/nav";
+// import { navStore } from "@/store/nav";
 
 const Sidebar = () => {
-  const { open, toggleOpen } = navStore();
+  // const { open, toggleOpen } = navStore();
   const currentPath = usePathname();
-  const { clearUser } = useUserStore();
+  // const { clearUser } = useUserStore();
   const router = useRouter();
 
   const logOut = () => {
-    clearUser();
+    // clearUser();
     router.push("/auth/sign-in");
   };
+
+  const open = true;
 
   return (
     <aside
@@ -31,7 +33,7 @@ const Sidebar = () => {
         <h1 className="font-base text-xl">Manager</h1>
       </div>
 
-      <div className="absolute top-3 right-4" onClick={toggleOpen}>
+      <div className="absolute top-3 right-4">
         <i className="ri-close-large-fill text-2xl md:hidden flex"></i>
       </div>
       <div className="px-3 py-5">

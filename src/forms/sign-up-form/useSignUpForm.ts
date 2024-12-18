@@ -1,6 +1,6 @@
 import { useForm } from "../../utils/hooks/useForm";
 import { object, string } from "yup";
-import { toast } from "react-toastify";
+import { toast } from "react-hot-toast";
 import { UserAPI } from "@/http/api/auth/auth.types";
 import { SignUpUser } from "@/http/api/auth/auth.index";
 import { useRouter } from "next/navigation";
