@@ -16,37 +16,37 @@ const FormFive: React.FC<FormOneProps> = ({
     <>
       <TextInput
         label="Guardian Name"
-        name="lga"
+        name="guardian"
         type="text"
-        value={user.email}
-        showCancelIcon={Boolean(user.email)}
+        value={user.guardian}
+        errorMessage={touched.guardian && errors.guardian}
         handleChange={handleChange}
       />
 
       <TextInput
         label="Guardian Phone"
-        name="phone"
+        name="guardianPhone"
         type="tel"
-        value={user.email}
-        showCancelIcon={Boolean(user.email)}
+        value={user.guardianPhone}
+        errorMessage={touched.guardianPhone && errors.guardianPhone}
         handleChange={handleChange}
       />
 
       <TextInput
         label="Guardian Address"
-        name="email"
+        name="guardianAddress"
         type="text"
-        value={user.email}
-        showCancelIcon={Boolean(user.email)}
+        value={user.guardianAddress}
+        errorMessage={touched.guardianAddress && errors.guardianAddress}
         handleChange={handleChange}
       />
 
       <TextInput
         label="Guardian Email Address"
-        name="email"
+        name="guardianEmail"
         type="text"
-        value={user.email}
-        showCancelIcon={Boolean(user.email)}
+        value={user.guardianEmail}
+        errorMessage={touched.guardianEmail && errors.guardianEmail}
         handleChange={handleChange}
       />
     </>

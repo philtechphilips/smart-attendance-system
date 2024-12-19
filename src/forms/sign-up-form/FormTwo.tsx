@@ -18,26 +18,26 @@ const FormTwo: React.FC<FormOneProps> = ({
         label="DOB"
         name="dob"
         type="date"
-        value={user.email}
-        showCancelIcon={Boolean(user.email)}
+        value={user.dob}
+        errorMessage={touched.dob && errors.dob}
         handleChange={handleChange}
       />
 
       <TextInput
         label="Country"
-        name="email"
+        name="country"
         type="text"
-        value={user.email}
-        showCancelIcon={Boolean(user.email)}
+        value={user.country}
         handleChange={handleChange}
+        errorMessage={touched.country && errors.country}
       />
 
       <TextInput
         label="State"
-        name="email"
+        name="state"
         type="text"
-        value={user.email}
-        showCancelIcon={Boolean(user.email)}
+        value={user.state}
+        errorMessage={touched.state && errors.state}
         handleChange={handleChange}
       />
     </>

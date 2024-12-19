@@ -18,8 +18,8 @@ const FormThree: React.FC<FormOneProps> = ({
         label="L.G.A"
         name="lga"
         type="text"
-        value={user.email}
-        showCancelIcon={Boolean(user.email)}
+        value={user.lga}
+        errorMessage={touched.lga && errors.lga}
         handleChange={handleChange}
       />
 
@@ -27,8 +27,8 @@ const FormThree: React.FC<FormOneProps> = ({
         label="Phone"
         name="phone"
         type="tel"
-        value={user.email}
-        showCancelIcon={Boolean(user.email)}
+        value={user.phone}
+        errorMessage={touched.phone && errors.phone}
         handleChange={handleChange}
       />
 
@@ -37,7 +37,7 @@ const FormThree: React.FC<FormOneProps> = ({
         name="email"
         type="text"
         value={user.email}
-        showCancelIcon={Boolean(user.email)}
+        errorMessage={touched.email && errors.email}
         handleChange={handleChange}
       />
 
@@ -45,8 +45,8 @@ const FormThree: React.FC<FormOneProps> = ({
         label="Address"
         name="address"
         type="text"
-        value={user.email}
-        showCancelIcon={Boolean(user.email)}
+        value={user.address}
+        errorMessage={touched.address && errors.address}
         handleChange={handleChange}
       />
     </>

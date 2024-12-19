@@ -17,35 +17,37 @@ const FormFour: React.FC<FormOneProps> = ({
     <>
       <SelectInput
         label="Level"
-        name="lga"
-        value={user.email}
+        name="levelId"
+        value={user.levelId}
         options={[]}
+        errorMessage={touched.levelId && errors.levelId}
         handleChange={handleChange}
       />
 
       <SelectInput
         label="School"
-        name="phone"
-        value={user.email}
+        name="schoolId"
+        value={user.schoolId}
         options={[]}
+        errorMessage={touched.schoolId && errors.schoolId}
         handleChange={handleChange}
       />
 
       <SelectInput
         label="Department"
-        name="email"
-        value={user.email}
+        name="departmentId"
+        value={user.departmentId}
         options={[]}
-        showCancelIcon={Boolean(user.email)}
+        errorMessage={touched.departmentId && errors.departmentId}
         handleChange={handleChange}
       />
 
       <SelectInput
         label="Program"
-        name="email"
-        value={user.email}
+        name="programId"
+        value={user.programId}
         options={[]}
-        showCancelIcon={Boolean(user.email)}
+        errorMessage={touched.programId && errors.programId}
         handleChange={handleChange}
       />
     </>

@@ -16,7 +16,7 @@ const FormOne: React.FC<FormOneProps> = ({
     <>
       <TextInput
         label="First Name"
-        name="email"
+        name="firstname"
         type="text"
         value={user.firstname}
         handleChange={handleChange}
@@ -25,7 +25,7 @@ const FormOne: React.FC<FormOneProps> = ({
 
       <TextInput
         label="Last Name"
-        name="email"
+        name="lastname"
         type="text"
         value={user.lastname}
         errorMessage={touched.lastname && errors.lastname}
@@ -34,7 +34,7 @@ const FormOne: React.FC<FormOneProps> = ({
 
       <TextInput
         label="Middle Name"
-        name="email"
+        name="middlename"
         type="text"
         value={user.middlename}
         errorMessage={touched.middlename && errors.middlename}

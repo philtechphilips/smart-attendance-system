@@ -60,6 +60,7 @@ export default function SignUpForm() {
     guardian: Yup.string().required("Guardian is required"),
     guardianAddress: Yup.string().required("Guardian Address is required"),
     guardianPhone: Yup.string().required("Guardian Phone is required"),
+    guardianEmail: Yup.string().required("Guardian Phone is required"),
     levelId: Yup.string().required("Level is required"),
     schoolId: Yup.string().required("School is required"),
     departmentId: Yup.string().required("Department is required"),
