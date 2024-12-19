@@ -74,7 +74,7 @@ export default function SignUpForm() {
 
   const onPrev = () => {
     setFormStep(formStep - 1);
-    setFormProgress(formProgress + 20);
+    setFormProgress(formProgress - 20);
   };
 
   const handleSubmit = async (

@@ -1,6 +1,9 @@
 import SelectInput from "@/components/inputs/select-input/SelectInput";
 import TextInput from "@/components/inputs/text-input/TextInput";
-import React from "react";
+import { getAllLevels } from "@/reducer/actions/level.dispatcher";
+import { getAllSchools } from "@/reducer/actions/school.dispatcher";
+import { RootState, useAppDispatch, useAppSelector } from "@/reducer/store";
+import React, { useEffect } from "react";
 interface FormOneProps {
   user: any;
   handleChange: (event: any) => void;
@@ -13,13 +16,22 @@ const FormFour: React.FC<FormOneProps> = ({
   errors,
   touched,
 }) => {
+  const dispatch = useAppDispatch();
+
+  const { allSchools } = useAppSelector((state: RootState) => state.schools);
+  const { allLevels } = useAppSelector((state: RootState) => state.levels);
+
+  useEffect(() => {
+    dispatch(getAllSchools());
+    dispatch(getAllLevels());
+  }, [dispatch]);
   return (
     <>
       <SelectInput
         label="Level"
         name="levelId"
         value={user.levelId}
-        options={[]}
+        options={allLevels}
         errorMessage={touched.levelId && errors.levelId}
         handleChange={handleChange}
       />
@@ -28,7 +40,7 @@ const FormFour: React.FC<FormOneProps> = ({
         label="School"
         name="schoolId"
         value={user.schoolId}
-        options={[]}
+        options={allSchools}
         errorMessage={touched.schoolId && errors.schoolId}
         handleChange={handleChange}
       />
