@@ -1,6 +1,7 @@
 "use client";
 import { useRouter } from "next/navigation";
-import { FormEvent, useState } from "react";
+import { Formik, Form, Field } from "formik";
+import * as Yup from "yup";
 import TextInput from "@/components/inputs/text-input/TextInput";
 import styles from "../../app/styles/auth.module.scss";
 import LinkButton from "@/components/buttons/link-button/LinkButton";
@@ -13,37 +14,41 @@ export default function SignInForm() {
   const router = useRouter();
   const dispatch = useAppDispatch();
   const { user: userData, isLoggedIn } = useAppSelector(
-    (state: RootState) => state.auth,
+    (state: RootState) => state.auth
   );
-  const [loading, setLoading] = useState(false);
-  const [user, setUser] = useState({
+
+  const initialValues = {
     email: "",
     password: "",
+  };
+
+  const validationSchema = Yup.object().shape({
+    email: Yup.string()
+      .email("Invalid email format")
+      .required("Email is required"),
+    password: Yup.string()
+      .min(6, "Password must be at least 6 characters")
+      .required("Password is required"),
   });
 
-  const handleChange = (event: any) => {
-    const { name, value } = event.target;
-    setUser({ ...user, [name]: value });
-  };
+  const handleSubmit = async (
+    values: typeof initialValues,
+    { setSubmitting }: any
+  ) => {
+    setSubmitting(true);
+    const result = await dispatch(login(values));
+    setSubmitting(false);
 
-  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
-    setLoading(true);
-    event.preventDefault();
-    if (user.email && user.password) {
-      const result = await dispatch(
-        login({ email: user.email, password: user.password }),
-      );
-      if (result) {
-        const parseResult = JSON.parse(JSON.stringify(result?.payload));
-        const token = parseResult?.token;
-        localStorage.setItem("token", token);
-      }
-      setLoading(false);
-      if (result?.type?.includes("rejected")) {
-        setLoading(false);
-      }
+    if (result) {
+      const parseResult = JSON.parse(JSON.stringify(result?.payload));
+      const token = parseResult?.token;
+      localStorage.setItem("token", token);
+    }
+    if (result?.type?.includes("rejected")) {
+      setSubmitting(false);
     }
   };
+
   return (
     <div className={styles.signin_container}>
       <section>
@@ -55,40 +60,66 @@ export default function SignInForm() {
         </p>
       </section>
 
-      <form onSubmit={handleSubmit}>
-        <TextInput
-          label="Email Address"
-          name="email"
-          type="text"
-          value={user.email}
-          showCancelIcon={Boolean(user.email)}
-          handleChange={handleChange}
-          handleCancelClick={() => setUser({ ...user, email: "" })}
-        />
+      <Formik
+        initialValues={initialValues}
+        validationSchema={validationSchema}
+        onSubmit={handleSubmit}
+      >
+        {({
+          isSubmitting,
+          errors,
+          touched,
+          values,
+          handleChange,
+          handleBlur,
+        }) => (
+          <Form>
+            {/* Email Input */}
+            <TextInput
+              label="Email Address"
+              name="email"
+              type="text"
+              value={values.email}
+              showCancelIcon={Boolean(values.email)}
+              handleChange={handleChange}
+              handleCancelClick={() =>
+                handleChange({ target: { name: "email", value: "" } })
+              }
+              errorMessage={touched.email && errors.email}
+            />
 
-        <TextInput
-          label="Password"
-          name="password"
-          type="password"
-          value={user.password}
-          handleChange={handleChange}
-        />
+            {/* Password Input */}
+            <TextInput
+              label="Password"
+              name="password"
+              type="password"
+              value={values.password}
+              handleChange={handleChange}
+              // handleBlur={handleBlur}
+              errorMessage={touched.password && errors.password}
+            />
 
-        <LinkButton href={"/auth/forgot-password"}>
-          <p className={styles.forgot_password}>Forgot password?</p>
-        </LinkButton>
+            {/* Forgot Password Link */}
+            <LinkButton href={"/auth/forgot-password"}>
+              <p className={styles.forgot_password}>Forgot password?</p>
+            </LinkButton>
 
-        <BaseButton type="submit" fit disabled={loading}>
-          Login
-        </BaseButton>
+            {/* Submit Button */}
+            <BaseButton type="submit" fit disabled={isSubmitting}>
+              {isSubmitting ? "Logging in..." : "Login"}
+            </BaseButton>
 
-        <LinkButton href={"/auth/sign-up"}>
-          <p className={styles.new_user}>
-            Don’t have an account?{" "}
-            <span style={{ color: "#4253f0" }}>Sign Up</span>
-          </p>
-        </LinkButton>
-      </form>
+            {/* Sign Up Link */}
+            <LinkButton href={"/auth/sign-up"}>
+              <p className={styles.new_user}>
+                Don’t have an account?{" "}
+                <span style={{ color: "#4253f0" }}>Sign Up</span>
+              </p>
+            </LinkButton>
+          </Form>
+        )}
+      </Formik>
     </div>
   );
 }
+
