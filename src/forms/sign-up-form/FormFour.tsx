@@ -1,35 +1,43 @@
+import SelectInput from "@/components/inputs/select-input/SelectInput";
 import TextInput from "@/components/inputs/text-input/TextInput";
 import React from "react";
 interface FormOneProps {
   user: any;
   handleChange: (event: any) => void;
 }
-const FormTwo: React.FC<FormOneProps> = ({ user, handleChange }) => {
+const FormFour: React.FC<FormOneProps> = ({ user, handleChange }) => {
   return (
     <>
-      <TextInput
-        label="DOB"
-        name="dob"
-        type="date"
+      <SelectInput
+        label="Level"
+        name="lga"
         value={user.email}
+        options={[]}
+        handleChange={handleChange}
+      />
+
+      <SelectInput
+        label="School"
+        name="phone"
+        value={user.email}
+        options={[]}
+        handleChange={handleChange}
+      />
+
+      <SelectInput
+        label="Department"
+        name="email"
+        value={user.email}
+        options={[]}
         showCancelIcon={Boolean(user.email)}
         handleChange={handleChange}
       />
 
-      <TextInput
-        label="Country"
+      <SelectInput
+        label="Program"
         name="email"
-        type="text"
         value={user.email}
-        showCancelIcon={Boolean(user.email)}
-        handleChange={handleChange}
-      />
-
-      <TextInput
-        label="State"
-        name="email"
-        type="text"
-        value={user.email}
+        options={[]}
         showCancelIcon={Boolean(user.email)}
         handleChange={handleChange}
       />
@@ -37,4 +45,4 @@ const FormTwo: React.FC<FormOneProps> = ({ user, handleChange }) => {
   );
 };
 
-export default FormTwo;
+export default FormFour;

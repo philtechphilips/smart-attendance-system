@@ -1,9 +1,49 @@
-import React from 'react'
-
-const FormThree = () => {
-  return (
-    <div>FormThree</div>
-  )
+import TextInput from "@/components/inputs/text-input/TextInput";
+import React from "react";
+interface FormOneProps {
+  user: any;
+  handleChange: (event: any) => void;
 }
+const FormThree: React.FC<FormOneProps> = ({ user, handleChange }) => {
+  return (
+    <>
+      <TextInput
+        label="L.G.A"
+        name="lga"
+        type="text"
+        value={user.email}
+        showCancelIcon={Boolean(user.email)}
+        handleChange={handleChange}
+      />
 
-export default FormThree
+      <TextInput
+        label="Phone"
+        name="phone"
+        type="tel"
+        value={user.email}
+        showCancelIcon={Boolean(user.email)}
+        handleChange={handleChange}
+      />
+
+      <TextInput
+        label="Email"
+        name="email"
+        type="text"
+        value={user.email}
+        showCancelIcon={Boolean(user.email)}
+        handleChange={handleChange}
+      />
+
+      <TextInput
+        label="Address"
+        name="address"
+        type="text"
+        value={user.email}
+        showCancelIcon={Boolean(user.email)}
+        handleChange={handleChange}
+      />
+    </>
+  );
+};
+
+export default FormThree;

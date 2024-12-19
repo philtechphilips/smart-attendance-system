@@ -7,6 +7,7 @@ import { PersistGate } from "redux-persist/integration/react";
 import { persistor, RootState, store } from "@/reducer/store";
 import { Store } from "@reduxjs/toolkit";
 import { ToastContainer } from "react-toastify";
+import "remixicon/fonts/remixicon.css";
 
 // export const metadata: Metadata = {
 //   title: "Create Next App",

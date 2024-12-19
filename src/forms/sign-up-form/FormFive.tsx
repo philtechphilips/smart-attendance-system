@@ -4,20 +4,29 @@ interface FormOneProps {
   user: any;
   handleChange: (event: any) => void;
 }
-const FormTwo: React.FC<FormOneProps> = ({ user, handleChange }) => {
+const FormFive: React.FC<FormOneProps> = ({ user, handleChange }) => {
   return (
     <>
       <TextInput
-        label="DOB"
-        name="dob"
-        type="date"
+        label="Guardian Name"
+        name="lga"
+        type="text"
         value={user.email}
         showCancelIcon={Boolean(user.email)}
         handleChange={handleChange}
       />
 
       <TextInput
-        label="Country"
+        label="Guardian Phone"
+        name="phone"
+        type="tel"
+        value={user.email}
+        showCancelIcon={Boolean(user.email)}
+        handleChange={handleChange}
+      />
+
+      <TextInput
+        label="Guardian Address"
         name="email"
         type="text"
         value={user.email}
@@ -26,7 +35,7 @@ const FormTwo: React.FC<FormOneProps> = ({ user, handleChange }) => {
       />
 
       <TextInput
-        label="State"
+        label="Guardian Email Address"
         name="email"
         type="text"
         value={user.email}
@@ -37,4 +46,4 @@ const FormTwo: React.FC<FormOneProps> = ({ user, handleChange }) => {
   );
 };
 
-export default FormTwo;
+export default FormFive;

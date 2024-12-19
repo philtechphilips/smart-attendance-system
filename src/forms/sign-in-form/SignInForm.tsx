@@ -14,7 +14,7 @@ export default function SignInForm() {
   const router = useRouter();
   const dispatch = useAppDispatch();
   const { user: userData, isLoggedIn } = useAppSelector(
-    (state: RootState) => state.auth
+    (state: RootState) => state.auth,
   );
 
   const initialValues = {
@@ -33,7 +33,7 @@ export default function SignInForm() {
 
   const handleSubmit = async (
     values: typeof initialValues,
-    { setSubmitting }: any
+    { setSubmitting }: any,
   ) => {
     setSubmitting(true);
     const result = await dispatch(login(values));
@@ -122,4 +122,3 @@ export default function SignInForm() {
     </div>
   );
 }
-

@@ -31,7 +31,7 @@ const TextInput = ({
   disabled,
   min,
   max,
-  errorMessage
+  errorMessage,
 }: InputProps) => {
   const [showPassword, setShowPassword] = useState(false);
 
@@ -52,9 +52,7 @@ const TextInput = ({
           min={min}
           max={max}
         />
-        {errorMessage && (
-          <p className="text-sm text-red-600">{errorMessage}</p>
-        )}
+        {errorMessage && <p className="text-sm text-red-600">{errorMessage}</p>}
         {type === "password" && (
           <div
             className="absolute inset-y-0 right-0 flex items-center pr-4"
