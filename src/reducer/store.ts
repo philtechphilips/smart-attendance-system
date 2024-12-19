@@ -6,6 +6,8 @@ import authReducer from "./slice/auth.slice";
 import navReducer from "./slice/nav.slice";
 import schoolsReducer from "./slice/schools.slice";
 import levelsReducer from "./slice/levels.slice";
+import programsReducer from "./slice/program.slice";
+import departmentsReducer from "./slice/department.slice";
 
 const persistConfig = {
   key: "root",
@@ -17,6 +19,8 @@ export const rootReducers = combineReducers({
   navigation: navReducer,
   schools: schoolsReducer,
   levels: levelsReducer,
+  programs: programsReducer,
+  departments: departmentsReducer,
 });
 const persistedReducer = persistReducer(persistConfig, rootReducers);
 //@ts-ignore

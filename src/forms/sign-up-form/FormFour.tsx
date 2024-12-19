@@ -20,6 +20,10 @@ const FormFour: React.FC<FormOneProps> = ({
 
   const { allSchools } = useAppSelector((state: RootState) => state.schools);
   const { allLevels } = useAppSelector((state: RootState) => state.levels);
+  const { allPrograms } = useAppSelector((state: RootState) => state.programs);
+  const { allDepartments } = useAppSelector(
+    (state: RootState) => state.departments,
+  );
 
   useEffect(() => {
     dispatch(getAllSchools());
@@ -31,7 +35,7 @@ const FormFour: React.FC<FormOneProps> = ({
         label="Level"
         name="levelId"
         value={user.levelId}
-        options={allLevels}
+        options={allLevels ? allLevels : []}
         errorMessage={touched.levelId && errors.levelId}
         handleChange={handleChange}
       />
@@ -40,7 +44,7 @@ const FormFour: React.FC<FormOneProps> = ({
         label="School"
         name="schoolId"
         value={user.schoolId}
-        options={allSchools}
+        options={allSchools ? allSchools : []}
         errorMessage={touched.schoolId && errors.schoolId}
         handleChange={handleChange}
       />
@@ -49,7 +53,7 @@ const FormFour: React.FC<FormOneProps> = ({
         label="Department"
         name="departmentId"
         value={user.departmentId}
-        options={[]}
+        options={allDepartments ? allDepartments : []}
         errorMessage={touched.departmentId && errors.departmentId}
         handleChange={handleChange}
       />
@@ -58,7 +62,7 @@ const FormFour: React.FC<FormOneProps> = ({
         label="Program"
         name="programId"
         value={user.programId}
-        options={[]}
+        options={allPrograms ? allPrograms : []}
         errorMessage={touched.programId && errors.programId}
         handleChange={handleChange}
       />
