@@ -1,6 +1,8 @@
 import SelectInput from "@/components/inputs/select-input/SelectInput";
 import TextInput from "@/components/inputs/text-input/TextInput";
+import { getAllDepartments } from "@/reducer/actions/department.dispatcher";
 import { getAllLevels } from "@/reducer/actions/level.dispatcher";
+import { getAllPrograms } from "@/reducer/actions/program.dispatcher";
 import { getAllSchools } from "@/reducer/actions/school.dispatcher";
 import { RootState, useAppDispatch, useAppSelector } from "@/reducer/store";
 import React, { useEffect } from "react";
@@ -28,6 +30,8 @@ const FormFour: React.FC<FormOneProps> = ({
   useEffect(() => {
     dispatch(getAllSchools());
     dispatch(getAllLevels());
+    dispatch(getAllPrograms());
+    dispatch(getAllDepartments());
   }, [dispatch]);
   return (
     <>
