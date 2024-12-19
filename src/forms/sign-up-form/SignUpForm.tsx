@@ -1,13 +1,15 @@
 "use client";
 import { useRouter } from "next/navigation";
 import { FormEvent, useState } from "react";
+import { Formik, Form, Field } from "formik";
+import * as Yup from "yup";
+import toast from "react-toastify";
 import TextInput from "@/components/inputs/text-input/TextInput";
 import styles from "../../app/styles/auth.module.scss";
 import LinkButton from "@/components/buttons/link-button/LinkButton";
 import BaseButton from "@/components/buttons/base-button/BaseButton";
 import { RootState, useAppDispatch, useAppSelector } from "@/reducer/store";
 import { login } from "@/reducer/actions/auth.dispatcher";
-import toast from "react-toastify";
 import FormOne from "./FormOne";
 import FormTwo from "./FormTwo";
 import FormFour from "./FormFour";
@@ -18,13 +20,11 @@ import { COLOURS } from "@/constants/colors";
 export default function SignUpForm() {
   const router = useRouter();
   const dispatch = useAppDispatch();
-  const { user: userData, isLoggedIn } = useAppSelector(
-    (state: RootState) => state.auth,
-  );
   const [formStep, setFormStep] = useState(1);
   const [formProgress, setFormProgress] = useState(20);
   const [loading, setLoading] = useState(false);
-  const [user, setUser] = useState({
+
+  const initialValues = {
     firstname: "",
     lastname: "",
     middlename: "",
@@ -42,12 +42,29 @@ export default function SignUpForm() {
     schoolId: "",
     departmentId: "",
     programId: "",
-  });
-
-  const handleChange = (event: any) => {
-    const { name, value } = event.target;
-    setUser({ ...user, [name]: value });
   };
+
+  const validationSchema = Yup.object().shape({
+    email: Yup.string()
+      .email("Invalid email format")
+      .required("Email is required"),
+    firstname: Yup.string().required("Firstname is required"),
+    lastname: Yup.string().required("Lastname is required"),
+    middlename: Yup.string().required("Middlename is required"),
+    dob: Yup.string().required("Date of birth is required"),
+    country: Yup.string().required("Country is required"),
+    lga: Yup.string().required("Local government area is required"),
+    state: Yup.string().required("State is required"),
+    phone: Yup.string().required("Phone is required"),
+    address: Yup.string().required("Address is required"),
+    guardian: Yup.string().required("Guardian is required"),
+    guardianAddress: Yup.string().required("Guardian Address is required"),
+    guardianPhone: Yup.string().required("Guardian Phone is required"),
+    levelId: Yup.string().required("Level is required"),
+    schoolId: Yup.string().required("School is required"),
+    departmentId: Yup.string().required("Department is required"),
+    programId: Yup.string().required("Program is required"),
+  });
 
   const onNext = () => {
     setFormStep(formStep + 1);
@@ -59,15 +76,13 @@ export default function SignUpForm() {
     setFormProgress(formProgress + 20);
   };
 
-  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
-    setLoading(true);
-    event.preventDefault();
-    if (user.email) {
-      // const result = await dispatch(
-      //   login({ email: user.email, password: user.password }),
-      // );
-    }
+  const handleSubmit = async (
+    values: typeof initialValues,
+    { setSubmitting }: any,
+  ) => {
+    setSubmitting(true);
   };
+
   return (
     <div className={styles.signin_container}>
       {formStep != 1 && (
@@ -96,31 +111,84 @@ export default function SignUpForm() {
         </p>
       </section>
 
-      <form onSubmit={handleSubmit}>
-        {formStep === 1 && <FormOne user={user} handleChange={handleChange} />}
-        {formStep === 2 && <FormTwo user={user} handleChange={handleChange} />}
-        {formStep === 3 && (
-          <FormThree user={user} handleChange={handleChange} />
-        )}
-        {formStep === 4 && <FormFour user={user} handleChange={handleChange} />}
-        {formStep === 5 && <FormFive user={user} handleChange={handleChange} />}
+      <Formik
+        initialValues={initialValues}
+        validationSchema={validationSchema}
+        onSubmit={handleSubmit}
+      >
+        {({
+          isSubmitting,
+          errors,
+          touched,
+          values,
+          handleChange,
+          handleBlur,
+        }) => (
+          <Form>
+            {formStep === 1 && (
+              <FormOne
+                user={values}
+                errors={errors}
+                touched={touched}
+                handleChange={handleChange}
+              />
+            )}
+            {formStep === 2 && (
+              <FormTwo
+                user={values}
+                errors={errors}
+                touched={touched}
+                handleChange={handleChange}
+              />
+            )}
+            {formStep === 3 && (
+              <FormThree
+                user={values}
+                errors={errors}
+                touched={touched}
+                handleChange={handleChange}
+              />
+            )}
+            {formStep === 4 && (
+              <FormFour
+                user={values}
+                errors={errors}
+                touched={touched}
+                handleChange={handleChange}
+              />
+            )}
+            {formStep === 5 && (
+              <FormFive
+                user={values}
+                errors={errors}
+                touched={touched}
+                handleChange={handleChange}
+              />
+            )}
 
-        {formStep === 5 ? (
-          <BaseButton className="mt-5" type="submit" fit disabled={loading}>
-            Create Account
-          </BaseButton>
-        ) : (
-          <BaseButton
-            onClick={onNext}
-            className="mt-5"
-            type="button"
-            fit
-            disabled={loading}
-          >
-            Next
-          </BaseButton>
+            {formStep === 5 ? (
+              <BaseButton
+                className="mt-5"
+                type="submit"
+                fit
+                disabled={isSubmitting}
+              >
+                Create Account
+              </BaseButton>
+            ) : (
+              <BaseButton
+                onClick={onNext}
+                className="mt-5"
+                type="button"
+                fit
+                disabled={loading}
+              >
+                Next
+              </BaseButton>
+            )}
+          </Form>
         )}
-      </form>
+      </Formik>
     </div>
   );
 }

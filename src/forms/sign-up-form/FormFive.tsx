@@ -3,8 +3,15 @@ import React from "react";
 interface FormOneProps {
   user: any;
   handleChange: (event: any) => void;
+  errors: any;
+  touched: any;
 }
-const FormFive: React.FC<FormOneProps> = ({ user, handleChange }) => {
+const FormFive: React.FC<FormOneProps> = ({
+  user,
+  handleChange,
+  errors,
+  touched,
+}) => {
   return (
     <>
       <TextInput
