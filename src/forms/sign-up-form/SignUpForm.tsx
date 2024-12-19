@@ -42,6 +42,7 @@ export default function SignUpForm() {
     schoolId: "",
     departmentId: "",
     programId: "",
+    guardianEmail: "",
   };
 
   const validationSchema = Yup.object().shape({
@@ -81,7 +82,6 @@ export default function SignUpForm() {
     values: typeof initialValues,
     { setSubmitting }: any,
   ) => {
-    console.log(values, "values");
     // setSubmitting(true);
   };
 

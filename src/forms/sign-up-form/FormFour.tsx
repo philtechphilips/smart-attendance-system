@@ -5,9 +5,10 @@ import { getAllLevels } from "@/reducer/actions/level.dispatcher";
 import { getAllPrograms } from "@/reducer/actions/program.dispatcher";
 import { getAllSchools } from "@/reducer/actions/school.dispatcher";
 import { RootState, useAppDispatch, useAppSelector } from "@/reducer/store";
+import { CreateStudent } from "@/types/User";
 import React, { useEffect } from "react";
 interface FormOneProps {
-  user: any;
+  user: CreateStudent;
   handleChange: (event: any) => void;
   errors: any;
   touched: any;
