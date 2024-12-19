@@ -12,7 +12,7 @@ const initialState: allDepartmentsState = {
 };
 
 const allDepartmentsSlice = createSlice({
-  name: "Schools",
+  name: "Department",
   initialState,
   reducers: {},
   extraReducers: (builder) => {

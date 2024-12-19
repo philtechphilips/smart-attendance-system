@@ -3,7 +3,7 @@ import { errorMessage } from "@/helpers/error-message";
 
 const getAllDepartments = async () => {
   try {
-    const response = await makeNetworkCall({ url: "/departments" });
+    const response = await makeNetworkCall({ url: "/departments/list" });
     return response.data;
   } catch (err) {
     console.log(err);

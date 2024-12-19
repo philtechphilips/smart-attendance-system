@@ -12,7 +12,7 @@ const initialState: allProgramsState = {
 };
 
 const allProgramsSlice = createSlice({
-  name: "Schools",
+  name: "Programs",
   initialState,
   reducers: {},
   extraReducers: (builder) => {

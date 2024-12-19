@@ -81,7 +81,8 @@ export default function SignUpForm() {
     values: typeof initialValues,
     { setSubmitting }: any,
   ) => {
-    setSubmitting(true);
+    console.log(values, "values");
+    // setSubmitting(true);
   };
 
   return (
@@ -172,7 +173,7 @@ export default function SignUpForm() {
                 className="mt-5"
                 type="submit"
                 fit
-                disabled={isSubmitting}
+                // disabled={isSubmitting}
               >
                 Create Account
               </BaseButton>

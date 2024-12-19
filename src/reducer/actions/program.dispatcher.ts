@@ -4,7 +4,7 @@ import getAllProgramsService from "@/services/Program.service";
 import { createAsyncThunk } from "@reduxjs/toolkit";
 
 export const getAllPrograms = createAsyncThunk(
-  "data/departments",
+  "data/programs",
   async (_, thunkAPI) => {
     try {
       const data = await getAllProgramsService.getAllPrograms();
