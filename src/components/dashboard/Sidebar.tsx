@@ -47,8 +47,8 @@ const Sidebar = () => {
       <div className="px-3 py-5">
         <h4 className="font-bold text-gray-700 py-5 px-2 mb-3 text-sm">Menu</h4>
         <ul className="flex flex-col gap-5">
-        {sidebarMenu(user?.role).map((item, index) => {
-                        return (
+          {sidebarMenu(user?.role).map((item, index) => {
+            return (
               <li
                 key={index}
                 className={`flex items-center gap-2 px-3 py-3 ${
@@ -62,7 +62,8 @@ const Sidebar = () => {
                   <p className={`text-sm`}>{item?.title}</p>
                 </Link>
               </li>
-                        )})}
+            );
+          })}
         </ul>
 
         <div
