@@ -7,7 +7,7 @@ export const getAllSchools = createAsyncThunk(
   async (_, thunkAPI) => {
     try {
       const data = await getAllSchoolsService.getAllSchools();
-      console.log(data, "All schools");
+
       return data;
     } catch (error) {
       const message = errorMessage(error);

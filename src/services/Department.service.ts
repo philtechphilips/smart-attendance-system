@@ -6,7 +6,6 @@ const getAllDepartments = async () => {
     const response = await makeNetworkCall({ url: "/departments/list" });
     return response.data;
   } catch (err) {
-    console.log(err);
     const message = errorMessage(err);
     throw new Error(message ?? "Network error");
   }

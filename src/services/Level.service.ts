@@ -6,7 +6,6 @@ const getAllLevels = async () => {
     const response = await makeNetworkCall({ url: "/levels" });
     return response.data;
   } catch (err) {
-    console.log(err);
     const message = errorMessage(err);
     throw new Error(message ?? "Network error");
   }

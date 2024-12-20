@@ -1,6 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { getAllSchools } from "../actions/school.dispatcher";
 import { PURGE } from "../store";
+import { toast } from "react-toastify";
 
 interface allSchoolsState {
   allSchools: any;
@@ -23,8 +24,7 @@ const allSchoolsSlice = createSlice({
         state.allSchools = action.payload;
       })
       .addCase(getAllSchools.rejected, (state) => {
-        console.log("Unable to get Schools");
-        // toast.error('Unable to get Alerts')
+        toast.error("Unable to get Schools");
       });
   },
 });

@@ -16,6 +16,7 @@ import FormFour from "./FormFour";
 import FormFive from "./FormFive";
 import FormThree from "./FormThree";
 import { COLOURS } from "@/constants/colors";
+import { register } from "@/reducer/actions/register.dispatcher";
 
 export default function SignUpForm() {
   const router = useRouter();
@@ -82,7 +83,9 @@ export default function SignUpForm() {
     values: typeof initialValues,
     { setSubmitting }: any,
   ) => {
-    // setSubmitting(true);
+    setSubmitting(true);
+    const result = await dispatch(register(values));
+    setSubmitting(false);
   };
 
   return (
