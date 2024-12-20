@@ -43,7 +43,7 @@ const SelectInput = ({
           onChange={handleChange}
           disabled={disabled}
         >
-          <option selected>Select an option</option>
+          <option defaultValue={""}>Select an option</option>
           {options &&
             options.map((item) => (
               <option key={item.id} value={item.id}>
