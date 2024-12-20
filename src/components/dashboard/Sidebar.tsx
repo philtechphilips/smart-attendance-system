@@ -2,14 +2,11 @@
 import React, { useEffect, useState } from "react";
 import "remixicon/fonts/remixicon.css";
 import Link from "next/link";
-// import useUserStore from "@/store/userStore";
 import { usePathname, useRouter } from "next/navigation";
-import { SIDEBAR } from "@/constants/dashboard";
-import { COLOURS } from "@/constants/colors";
 import { RootState, useAppDispatch, useAppSelector } from "@/reducer/store";
 import { logout } from "@/reducer/actions/auth.dispatcher";
 import { toggleOpen } from "@/reducer/slice/nav.slice";
-// import { navStore } from "@/store/nav";
+import { sidebarMenu } from "@/util/constant";
 
 const Sidebar = () => {
   const open = useAppSelector((state: RootState) => state.navigation.open);
@@ -50,8 +47,8 @@ const Sidebar = () => {
       <div className="px-3 py-5">
         <h4 className="font-bold text-gray-700 py-5 px-2 mb-3 text-sm">Menu</h4>
         <ul className="flex flex-col gap-5">
-          {SIDEBAR &&
-            SIDEBAR.map((item, index) => (
+        {sidebarMenu(user?.role).map((item, index) => {
+                        return (
               <li
                 key={index}
                 className={`flex items-center gap-2 px-3 py-3 ${
@@ -65,7 +62,7 @@ const Sidebar = () => {
                   <p className={`text-sm`}>{item?.title}</p>
                 </Link>
               </li>
-            ))}
+                        )})}
         </ul>
 
         <div
