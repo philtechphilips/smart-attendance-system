@@ -1,1 +1,1 @@
-export const unAuthRoutes: string[] = ["/"];
+export const unAuthRoutes: string[] = ["/", "/auth/sign-up"];

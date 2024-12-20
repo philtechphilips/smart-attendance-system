@@ -4,6 +4,11 @@ import { persistStore, persistReducer, PURGE } from "redux-persist";
 import storage from "redux-persist/lib/storage";
 import authReducer from "./slice/auth.slice";
 import navReducer from "./slice/nav.slice";
+import schoolsReducer from "./slice/schools.slice";
+import levelsReducer from "./slice/levels.slice";
+import programsReducer from "./slice/program.slice";
+import departmentsReducer from "./slice/department.slice";
+import registerReducer from "./slice/register.slice";
 
 const persistConfig = {
   key: "root",
@@ -13,6 +18,11 @@ const persistConfig = {
 export const rootReducers = combineReducers({
   auth: authReducer,
   navigation: navReducer,
+  schools: schoolsReducer,
+  levels: levelsReducer,
+  programs: programsReducer,
+  departments: departmentsReducer,
+  register: registerReducer,
 });
 const persistedReducer = persistReducer(persistConfig, rootReducers);
 //@ts-ignore
