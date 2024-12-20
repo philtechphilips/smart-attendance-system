@@ -11,7 +11,6 @@ export const STUDENT_SIDEBAR = [
   },
 ];
 
-
 export const LECTURER_SIDEBAR = [
   {
     title: "Dashboard",
@@ -24,7 +23,6 @@ export const LECTURER_SIDEBAR = [
     icon: "ri-task-line",
   },
 ];
-
 
 export const ADMIN_SIDEBAR = [
   {
