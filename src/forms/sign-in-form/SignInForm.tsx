@@ -9,6 +9,7 @@ import BaseButton from "@/components/buttons/base-button/BaseButton";
 import { RootState, useAppDispatch, useAppSelector } from "@/reducer/store";
 import { login } from "@/reducer/actions/auth.dispatcher";
 import toast from "react-toastify";
+import LoaderIcon from "@/components/icons/LoaderIcon";
 
 export default function SignInForm() {
   const router = useRouter();
@@ -106,7 +107,7 @@ export default function SignInForm() {
 
             {/* Submit Button */}
             <BaseButton type="submit" fit disabled={isSubmitting}>
-              {isSubmitting ? "Logging in..." : "Login"}
+              {isSubmitting ? <LoaderIcon /> : "Login"}
             </BaseButton>
 
             {/* Sign Up Link */}

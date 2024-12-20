@@ -17,6 +17,7 @@ import FormFive from "./FormFive";
 import FormThree from "./FormThree";
 import { COLOURS } from "@/constants/colors";
 import { register } from "@/reducer/actions/register.dispatcher";
+import LoaderIcon from "@/components/icons/LoaderIcon";
 
 export default function SignUpForm() {
   const router = useRouter();
@@ -176,9 +177,9 @@ export default function SignUpForm() {
                 className="mt-5"
                 type="submit"
                 fit
-                // disabled={isSubmitting}
+                disabled={isSubmitting}
               >
-                Create Account
+                {isSubmitting ? <LoaderIcon /> : "Create Account"}
               </BaseButton>
             ) : (
               <BaseButton
