@@ -1,23 +1,23 @@
 "use client";
 
-import { useState, ChangeEvent } from "react";
-import TextInput from "@/components/inputs/text-input/TextInput";
-import styles from "../../app/styles/auth.module.scss";
-import BaseButton from "@/components/buttons/base-button/BaseButton";
-import useForgotPasswordForm from "./useForgotPasswordForm";
+// import { useState, ChangeEvent } from "react";
+// import TextInput from "@/components/inputs/text-input/TextInput";
+// import styles from "../../app/styles/auth.module.scss";
+// import BaseButton from "@/components/buttons/base-button/BaseButton";
+// import useForgotPasswordForm from "./useForgotPasswordForm";
 
 export default function ForgotPasswordForm() {
-  const {
-    formData,
-    handleChange,
-    handleSubmit,
-    validationError,
-    validationSchema,
-    isLoading,
-  } = useForgotPasswordForm();
+  // const {
+  //   formData,
+  //   handleChange,
+  //   handleSubmit,
+  //   validationError,
+  //   validationSchema,
+  //   isLoading,
+  // } = useForgotPasswordForm();
   return (
-    <div className={styles.signin_container}>
-      <section>
+    <div>
+      {/* <section>
         <h2 className="text-[28px] font-bold text-[#1D1D1D]">
           Forgot your password{" "}
         </h2>
@@ -43,7 +43,7 @@ export default function ForgotPasswordForm() {
         <BaseButton type="submit" fit disabled={isLoading}>
           {isLoading ? "Loading..." : "Send"}
         </BaseButton>
-      </form>
+      </form> */}
     </div>
   );
 }
