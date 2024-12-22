@@ -4,13 +4,23 @@ import { toast } from "react-toastify";
 import { getStudentsByDepartment } from "../actions/students.dispatcher";
 
 interface allStudentsState {
-  allStudents: any;
-  isLoading: boolean;
+  allStudents: {
+    items: any[];
+    pagination: {
+      total: number;
+      currentPage: number;
+    };
+  };
 }
 
 const initialState: allStudentsState = {
-  allStudents: [],
-  isLoading: true,
+  allStudents: {
+    items: [],
+    pagination: {
+      total: 0,
+      currentPage: 0,
+    },
+  },
 };
 
 const allStudentsSlice = createSlice({
@@ -21,14 +31,18 @@ const allStudentsSlice = createSlice({
     builder
       .addCase(PURGE, (state) => {
         state.allStudents = initialState.allStudents;
-        state.isLoading = false;
       })
       .addCase(getStudentsByDepartment.fulfilled, (state, action) => {
-        state.allStudents = action.payload;
-        state.isLoading = false;
+        const newItems = action.payload.items.filter(
+          (newItem: any) =>
+            !state.allStudents.items.some(
+              (existingItem) => existingItem.id === newItem.id,
+            ),
+        );
+        state.allStudents.items = [...state.allStudents.items, ...newItems];
+        state.allStudents.pagination = action.payload.pagination;
       })
       .addCase(getStudentsByDepartment.rejected, (state) => {
-        state.isLoading = false;
         toast.error("Unable to get students!");
       });
   },
