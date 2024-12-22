@@ -10,13 +10,32 @@ import { getStaffsByDepartment } from "@/reducer/actions/lecturer.dispatcher";
 const LecturerList = () => {
   const dispatch = useAppDispatch();
   const [isLoading, setIsLoading] = useState(false);
+  const [paginationValue, setPaginationValue] = useState(1);
 
   const { allStaffs } = useAppSelector((state: RootState) => state.staffs);
-  console.log(allStaffs, "staffs");
 
   useEffect(() => {
-    dispatch(getStaffsByDepartment());
-  }, []);
+    dispatch(
+      getStaffsByDepartment({
+        currentPage: paginationValue,
+        pageSize: 10,
+      }),
+    );
+  }, [dispatch, paginationValue]);
+
+  const handleScroll = (e: any) => {
+    const bottom =
+      e.target.scrollHeight - e.target.scrollTop <= e.target.clientHeight + 1;
+    if (
+      !isLoading &&
+      bottom &&
+      paginationValue < Math.ceil(allStaffs?.pagination?.total / 10)
+    ) {
+      setPaginationValue((prev) => prev + 1);
+      setIsLoading(true);
+    }
+  };
+
   return (
     <>
       <div className="flex  justify-between items-center p-4 border-b-2 border-[#e6e6e6]">
@@ -27,7 +46,7 @@ const LecturerList = () => {
       <main>
         <div
           className="w-full table__container table__container_full text-sm leading-4 pb-[4rem]"
-          // onScroll={handleScroll}
+          onScroll={handleScroll}
         >
           {allStaffs?.items?.length > 0 && (
             <table className="w-full text-sm leading-6 bg-white border-collapse table-fixed">

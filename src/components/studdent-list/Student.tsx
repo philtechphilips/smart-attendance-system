@@ -4,7 +4,6 @@ import { RootState, useAppDispatch, useAppSelector } from "@/reducer/store";
 import { getStudentsByDepartment } from "@/reducer/actions/students.dispatcher";
 import EmptyTable from "../emptytable";
 import LoaderIcon from "../icons/LoaderIcon";
-import SolidDivider from "../icons/SolidDivider";
 
 const Students = () => {
   const dispatch = useAppDispatch();

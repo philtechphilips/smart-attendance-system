@@ -4,11 +4,23 @@ import { toast } from "react-toastify";
 import { getStaffsByDepartment } from "../actions/lecturer.dispatcher";
 
 interface allStaffsState {
-  allStaffs: any;
+  allStaffs: {
+    items: any[];
+    pagination: {
+      total: number;
+      currentPage: number;
+    };
+  };
 }
 
 const initialState: allStaffsState = {
-  allStaffs: [],
+  allStaffs: {
+    items: [],
+    pagination: {
+      total: 0,
+      currentPage: 0,
+    },
+  },
 };
 
 const allStaffsSlice = createSlice({
@@ -21,7 +33,14 @@ const allStaffsSlice = createSlice({
         state.allStaffs = initialState.allStaffs;
       })
       .addCase(getStaffsByDepartment.fulfilled, (state, action) => {
-        state.allStaffs = action.payload;
+        const newItems = action.payload.items.filter(
+          (newItem: any) =>
+            !state.allStaffs.items.some(
+              (existingItem) => existingItem.id === newItem.id,
+            ),
+        );
+        state.allStaffs.items = [...state.allStaffs.items, ...newItems];
+        state.allStaffs.pagination = action.payload.pagination;
       })
       .addCase(getStaffsByDepartment.rejected, (state) => {
         toast.error("Unable to get staffs!");
