@@ -4,98 +4,47 @@ import { RootState, useAppDispatch, useAppSelector } from "@/reducer/store";
 import { getStudentsByDepartment } from "@/reducer/actions/students.dispatcher";
 import EmptyTable from "../emptytable";
 import LoaderIcon from "../icons/LoaderIcon";
-import SolidDivider from "../icons/SolidDivider";
 
 const Students = () => {
   const dispatch = useAppDispatch();
 
-  const { allStudents, isLoading } = useAppSelector(
-    (state: RootState) => state.students,
-  );
-  console.log(allStudents, "students");
+  const { allStudents } = useAppSelector((state: RootState) => state.students);
+  const [isLoading, setIsLoading] = useState(false);
+  const [paginationValue, setPaginationValue] = useState(1);
+
+  const handleScroll = (e: any) => {
+    const bottom =
+      e.target.scrollHeight - e.target.scrollTop <= e.target.clientHeight + 1;
+    if (
+      !isLoading &&
+      bottom &&
+      paginationValue < Math.ceil(allStudents?.pagination?.total / 10)
+    ) {
+      setPaginationValue((prev) => prev + 1);
+      setIsLoading(true);
+    }
+  };
 
   useEffect(() => {
-    dispatch(getStudentsByDepartment());
-    if (allStudents) {
-    }
-  }, []);
+    dispatch(
+      getStudentsByDepartment({
+        currentPage: paginationValue,
+        pageSize: 10,
+      }),
+    );
+    setIsLoading(false);
+  }, [dispatch, paginationValue]);
   return (
     <>
       <div className="flex  justify-between items-center p-4 border-b-2 border-[#e6e6e6]">
         <div className="font-semibold leading-10">
           Students list ({allStudents?.pagination?.total || 0})
         </div>
-        <div className="flex items-center gap-3">
-          {/* {activeEvent == 1 && (
-                    <>
-                        <div className="bg-[#e6e6e6] h-10 flex items-center rounded">
-                            <DropdownMenu
-                                data={EventListDropdown}
-                                name="Events:"
-                                selectedDate={selectedDevice}
-                                className
-                                dropdownAction={value => {
-                                    switchDeviceCovered(value)
-                                }}
-                                changeDropdownWidth
-                            />
-                        </div>
-
-                        <SolidDivider />
-                    </>
-                )} */}
-          <div className="bg-[#e6e6e6] h-10 flex items-center rounded">
-            {/* <DropdownMenu
-                        data={severityData}
-                        name="Severity:"
-                        selectedDate={selectedSeverity}
-                        className
-                        dropdownAction={value => {
-                            switchEventsSeverity(value.toLowerCase())
-                        }}
-                        changeDropdownWidth
-                    /> */}
-          </div>
-
-          <SolidDivider />
-          <div className="bg-[#e6e6e6] h-10 flex items-center rounded">
-            {/* <DropdownMenu
-                        data={eventStatusData}
-                        selectedDate={selectedStatus}
-                        name="Status:"
-                        className
-                        dropdownAction={value => {
-                            switchEventsStatus(value.toLowerCase())
-                        }}
-                        changeDropdownWidth
-                    /> */}
-
-            {/* <CheckboxDropdown
-                        eventStatusData={eventStatusData}
-                        selectedItems={selectedStatus}
-                        setSelectedItems={setSelectedStatus}
-                    /> */}
-          </div>
-          <SolidDivider />
-          {/* <DropdownMenu
-                    Icon={CalendarIcon}
-                    data={modifiedFilterSiteData}
-                    selectedDate={selectedPeriod}
-                    name={''}
-                    handleClick={value => {
-                        customClick(value)
-                    }}
-                    selectedCustomDate={selectedCustomDate}
-                    dropdownAction={value => {
-                        switchPeriod(value.toLowerCase())
-                    }}
-                /> */}
-        </div>
       </div>
       <main>
         <div
           className="w-full table__container table__container_full text-sm leading-4 pb-[4rem]"
-          // onScroll={handleScroll}
+          onScroll={handleScroll}
         >
           {allStudents?.items?.length > 0 && (
             <table className="w-full text-sm leading-6 bg-white border-collapse table-fixed">
@@ -108,21 +57,6 @@ const Students = () => {
                   <th>
                     <div className="flex items-center gap-2">
                       <span className="">Matric N0.</span>
-                      {/* <SortToggle
-                                            updateSortParam={
-                                                updateSortParam
-                                            }
-                                            sort={
-                                                SafetyPointSortFields.sortDate
-                                            }
-                                            currentSort={currentSort}
-                                            idSelected={
-                                                'eventlist-date-selected'
-                                            }
-                                            idUnSelected={
-                                                'eventlist-date-unselected'
-                                            }
-                                        /> */}
                     </div>
                   </th>
                   <th className="py-3 ">School</th>
