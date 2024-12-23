@@ -9,7 +9,6 @@ const getDepartmentStaffs = async (params: Partial<StudentListParams>) => {
     const response = await makeNetworkCall({
       url: `/staffs/departmental-staffs?${queryString}`,
     });
-    console.log(response);
     return response.data;
   } catch (err) {
     const message = errorMessage(err);

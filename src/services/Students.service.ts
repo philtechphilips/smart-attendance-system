@@ -9,10 +9,8 @@ const getDepartmentStudents = async (params: Partial<StudentListParams>) => {
     const response = await makeNetworkCall({
       url: `/students/departmental-students?${queryString}`,
     });
-    console.log(response);
     return response.data;
   } catch (err) {
-    console.log(err);
     const message = errorMessage(err);
     throw new Error(message ?? "Network error");
   }

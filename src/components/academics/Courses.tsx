@@ -13,7 +13,6 @@ const CourseList = () => {
   const { allCourses } = useAppSelector((state: RootState) => state.courses);
   const [isLoading, setIsLoading] = useState(false);
   const [paginationValue, setPaginationValue] = useState(1);
-  console.log(allCourses, "all .....................");
 
   const handleScroll = (e: any) => {
     const bottom =

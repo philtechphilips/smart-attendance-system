@@ -11,7 +11,6 @@ const getDepartmentCourses = async (params: Partial<StudentListParams>) => {
     });
     return response.data;
   } catch (err) {
-    console.log(err);
     const message = errorMessage(err);
     throw new Error(message ?? "Network error");
   }
@@ -25,7 +24,6 @@ export const deleteCourse = async (id: string) => {
     });
     return response.data;
   } catch (err) {
-    console.log(err);
     const message = errorMessage(err);
     throw new Error(message ?? "Network error");
   }

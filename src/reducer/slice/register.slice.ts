@@ -25,7 +25,6 @@ const registerSlice = createSlice({
         toast.success("Account created sucessfully!");
       })
       .addCase(register.rejected, (state, action) => {
-        console.log(action, "action");
         const errorMessage =
           action.payload || action.error.message || "Unable to create account!";
         toast.error(errorMessage);
