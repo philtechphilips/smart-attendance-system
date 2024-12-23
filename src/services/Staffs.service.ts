@@ -16,6 +16,18 @@ const getDepartmentStaffs = async (params: Partial<StudentListParams>) => {
   }
 };
 
+export const getDepartmentStaff = async () => {
+  try {
+    const response = await makeNetworkCall({
+      url: `/staffs/departmental-staffs`,
+    });
+    return response.data;
+  } catch (err) {
+    const message = errorMessage(err);
+    throw new Error(message ?? "Network error");
+  }
+};
+
 const StaffsService = {
   getDepartmentStaffs,
 };

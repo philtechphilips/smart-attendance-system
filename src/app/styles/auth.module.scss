@@ -41,7 +41,11 @@
 
 .signup_container,
 .signin_container {
-  margin-top: 0px !important;
+  max-height: 80vh; // Restrict the height to 80% of the viewport
+  overflow-y: auto; // Enable scrolling if content overflows
+  padding: 2rem; // Add padding for spacing
+  box-sizing: border-box; // Ensure padding is included in the dimensions
+  margin-top: 1rem;
   margin-bottom: 40px;
   padding: 40px 120px;
   @media (max-width: 768px) {

@@ -6,6 +6,8 @@ import EmptyTable from "../emptytable";
 import LoaderIcon from "../icons/LoaderIcon";
 import { getCoursesByDepartment } from "@/reducer/actions/courses.dispatcher";
 import { deleteCourse } from "@/services/courses.service";
+import BaseButton from "../buttons/base-button/BaseButton";
+import CreateCourseForm from "@/forms/create-course/CreateCourse";
 
 const CourseList = () => {
   const dispatch = useAppDispatch();
@@ -13,6 +15,7 @@ const CourseList = () => {
   const { allCourses } = useAppSelector((state: RootState) => state.courses);
   const [isLoading, setIsLoading] = useState(false);
   const [paginationValue, setPaginationValue] = useState(1);
+  const [showCreateModal, setShowCreateModal] = useState(false);
 
   const handleScroll = (e: any) => {
     const bottom =
@@ -69,11 +72,22 @@ const CourseList = () => {
     });
   };
 
+  const handleCreateCourse = () => {
+    setShowCreateModal(!showCreateModal);
+  };
+
   return (
     <>
       <div className="flex  justify-between items-center p-4 border-b-2 border-[#e6e6e6]">
         <div className="font-semibold leading-10">
           Courses ({allCourses?.pagination?.total || 0})
+        </div>
+
+        <div
+          className="font-semibold text-sm leading-10"
+          onClick={handleCreateCourse}
+        >
+          <BaseButton className="px-5 py-1">Create Course</BaseButton>
         </div>
       </div>
       <main>
@@ -156,6 +170,15 @@ const CourseList = () => {
           )}
         </div>
       </main>
+      {showCreateModal && (
+        <>
+          <div className="w-full h-screen flex items-center justify-center fixed top-0 left-0 z-[1500]">
+            <CreateCourseForm closeForm={handleCreateCourse} />
+          </div>
+
+          <div className="w-full fixed top-0 left-0 h-screen bg-black bg-opacity-50 z-[1000]"></div>
+        </>
+      )}
     </>
   );
 };

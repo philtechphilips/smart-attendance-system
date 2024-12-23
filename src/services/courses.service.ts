@@ -16,6 +16,21 @@ const getDepartmentCourses = async (params: Partial<StudentListParams>) => {
   }
 };
 
+export const createCourses = async (data: any) => {
+  try {
+    const response = await makeNetworkCall({
+      url: `/courses`,
+      method: "POST",
+      body: data,
+    });
+
+    return response.data;
+  } catch (err) {
+    const message = errorMessage(err);
+    throw new Error(message ?? "Network error");
+  }
+};
+
 export const deleteCourse = async (id: string) => {
   try {
     const response = await makeNetworkCall({

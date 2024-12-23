@@ -17,6 +17,8 @@ interface InputProps {
   handleChange?: ChangeEventHandler<HTMLInputElement>;
   handleCancelClick?: VoidFunction;
   errorMessage?: string | undefined | false;
+  className?: any;
+  width?: string;
 }
 
 const TextInput = ({
@@ -32,6 +34,8 @@ const TextInput = ({
   min,
   max,
   errorMessage,
+  className,
+  width,
 }: InputProps) => {
   const [showPassword, setShowPassword] = useState(false);
 
@@ -42,7 +46,7 @@ const TextInput = ({
       </label>
       <div className="relative">
         <input
-          className="w-full px-4 h-14 rounded border border-gray-300 focus:outline-none focus:border-[#D69E77]"
+          className={`${width ? width : "w-full"} px-4 h-14 rounded border border-gray-300 focus:outline-none focus:border-[#D69E77] ${className}`}
           type={showPassword ? "text" : type}
           name={name}
           value={value ?? ""}
