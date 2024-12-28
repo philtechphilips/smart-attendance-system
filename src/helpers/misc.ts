@@ -70,3 +70,16 @@ export const clearCookies = () => {
     document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/;`;
   }
 };
+
+export const isWithinContainer = (child: any, parentClass: string) => {
+  let node = child;
+  while (node) {
+    const isClassPresent = node.classList?.contains(parentClass);
+    if (isClassPresent) {
+      return true;
+    }
+    // Traverse up to the parent
+    node = node.parentNode;
+  }
+  return false;
+};
