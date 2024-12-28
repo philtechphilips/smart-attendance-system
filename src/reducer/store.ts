@@ -11,6 +11,7 @@ import departmentsReducer from "./slice/department.slice";
 import registerReducer from "./slice/register.slice";
 import studentReducer from "./slice/student.slice";
 import staffReducer from "./slice/staff.slice";
+import coursesReducer from "./slice/courses.slice";
 
 const persistConfig = {
   key: "root",
@@ -27,6 +28,7 @@ export const rootReducers = combineReducers({
   register: registerReducer,
   students: studentReducer,
   staffs: staffReducer,
+  courses: coursesReducer,
 });
 const persistedReducer = persistReducer(persistConfig, rootReducers);
 //@ts-ignore
