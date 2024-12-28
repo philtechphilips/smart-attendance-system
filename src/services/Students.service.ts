@@ -2,7 +2,9 @@ import makeNetworkCall from "@/helpers/axios-request";
 import { errorMessage } from "@/helpers/error-message";
 import { StudentListParams } from "@/reducer/actions/students.dispatcher";
 
-const getDepartmentStudents = async (params: Partial<StudentListParams>) => {
+export const getDepartmentStudents = async (
+  params: Partial<StudentListParams>,
+) => {
   const { currentPage, pageSize } = params;
   let queryString = `currentPage=${currentPage}&pageSize=${pageSize}`;
   try {

@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from "react";
 import classNames from "classnames";
-import { RootState, useAppDispatch, useAppSelector } from "@/reducer/store";
-import { getStudentsByDepartment } from "@/reducer/actions/students.dispatcher";
+import { useAppDispatch } from "@/reducer/store";
 import EmptyTable from "../emptytable";
 import LoaderIcon from "../icons/LoaderIcon";
+import { getDepartmentStudents } from "@/services/Students.service";
 
 const Students = () => {
   const dispatch = useAppDispatch();
-
-  const { allStudents } = useAppSelector((state: RootState) => state.students);
+  const [allStudents, setAllStudents] = useState<any>({});
+  const [students, setStudents] = useState<any>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [paginationValue, setPaginationValue] = useState(1);
 
@@ -25,13 +25,25 @@ const Students = () => {
     }
   };
 
+  const fetchStudents = async () => {
+    const res = await getDepartmentStudents({
+      currentPage: paginationValue,
+      pageSize: 10,
+    });
+    setStudents((prevStudents: any) => {
+      const existingIds = new Set(
+        prevStudents.map((student: any) => student.id),
+      );
+      const newStudents = res.items.filter(
+        (item: any) => !existingIds.has(item.id),
+      );
+      return [...prevStudents, ...newStudents];
+    });
+    setAllStudents(res);
+  };
+
   useEffect(() => {
-    dispatch(
-      getStudentsByDepartment({
-        currentPage: paginationValue,
-        pageSize: 10,
-      }),
-    );
+    fetchStudents();
     setIsLoading(false);
   }, [dispatch, paginationValue]);
   return (
@@ -46,7 +58,7 @@ const Students = () => {
           className="w-full table__container table__container_full text-sm leading-4 pb-[4rem]"
           onScroll={handleScroll}
         >
-          {allStudents?.items?.length > 0 && (
+          {students?.length > 0 && (
             <table className="w-full text-sm leading-6 bg-white border-collapse table-fixed">
               <thead className="sticky top-0 bg-white z-[2]">
                 <tr className="text-left">
@@ -66,7 +78,7 @@ const Students = () => {
                 </tr>
               </thead>
               <tbody>
-                {allStudents?.items?.map((student: any, index: number) => (
+                {students?.map((student: any, index: number) => (
                   <tr
                     key={index}
                     className="border-t-2 border-[#e6e6e6] text-[#4D4D4D] w-full hover:bg-[#737373] hover:bg-opacity-10 cursor-pointer"
