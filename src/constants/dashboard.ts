@@ -42,7 +42,7 @@ export const ADMIN_SIDEBAR = [
   },
   {
     title: "Attendance",
-    url: "/student/attendance",
+    url: "/dashboard/attendance",
     icon: "ri-survey-line",
   },
 ];

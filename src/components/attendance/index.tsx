@@ -1,10 +1,10 @@
 "use client";
 import React, { useState } from "react";
-import CourseList from "./Courses";
+import AttendanceList from "./AttendanceList";
 
-const Academics = () => {
+const Attendances = () => {
   const currTab = localStorage.getItem("currEventTab");
-  const [activeEvent, setActiveEvent] = useState(0);
+  const [activeEvent, setActiveEvent] = useState(currTab ? +currTab : 0);
   const handleActiveEvent = (index: number) => {
     localStorage.setItem("currEventTab", String(index));
     setActiveEvent(index);
@@ -21,25 +21,25 @@ const Academics = () => {
             } py-4 cursor-pointer`}
             onClick={() => handleActiveEvent(0)}
           >
-            Courses
+            Attendance
           </span>
-          {/* <span
+          <span
             className={`${
               activeEvent === 1 &&
               "border-b-4 px-4 border-[#4253F0] rounded-b-sm font_gilroy_semi-bold text-base leading-6"
             } py-4 cursor-pointer `}
             onClick={() => handleActiveEvent(1)}
           >
-            Department Staffs
-          </span> */}
+            Dumped Attendance
+          </span>
         </div>
       </div>
 
       <div className="event__list__container">
-        <CourseList />
+        <AttendanceList />
       </div>
     </>
   );
 };
 
-export default Academics;
+export default Attendances;
