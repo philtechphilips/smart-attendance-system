@@ -6,7 +6,7 @@
 //     zonalMenuItems,
 // } from '../utils/constant'
 
-import { ToastStatus } from "@/types/User";
+import { ToastStatus } from "../../types/User";
 import { toast } from "react-toastify";
 
 // export const formatDate = (date_string: string, formatString?: string) => {

@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { login, logout } from "../actions/auth.dispatcher";
-import { ToastStatus, UserType } from "@/types/User";
+import { ToastStatus, UserType } from "../../../types/User";
 import { customToast } from "@/helpers/misc";
 
 interface AuthState {

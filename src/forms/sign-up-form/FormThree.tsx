@@ -1,5 +1,5 @@
 import TextInput from "@/components/inputs/text-input/TextInput";
-import { CreateStudent } from "@/types/User";
+import { CreateStudent } from "../../../types/User";
 import React from "react";
 interface FormOneProps {
   user: CreateStudent;

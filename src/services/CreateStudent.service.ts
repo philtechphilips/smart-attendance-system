@@ -1,6 +1,6 @@
 import makeNetworkCall from "@/helpers/axios-request";
 import { errorMessage } from "@/helpers/error-message";
-import { CreateStudent } from "@/types/User";
+import { CreateStudent } from "../../types/User";
 
 const register = async (data: CreateStudent) => {
   try {

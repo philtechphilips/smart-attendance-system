@@ -1,7 +1,7 @@
 import AuthService from "@/services/Auth.service";
 import { errorMessage } from "@/helpers/error-message";
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import { User } from "@/types/User";
+import { User } from "../../../types/User";
 
 export const login = createAsyncThunk(
   "auth/login",

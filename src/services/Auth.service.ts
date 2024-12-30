@@ -1,7 +1,7 @@
 import makeNetworkCall from "@/helpers/axios-request";
 import { errorMessage } from "@/helpers/error-message";
 import { persistor } from "@/reducer/store";
-import { User } from "@/types/User";
+import { User } from "../../types/User";
 import axios from "axios";
 
 const login = async (data: User) => {

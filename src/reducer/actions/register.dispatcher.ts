@@ -1,7 +1,7 @@
 import AuthService from "@/services/Auth.service";
 import { errorMessage } from "@/helpers/error-message";
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import { CreateStudent, User } from "@/types/User";
+import { CreateStudent, User } from "../../../types/User";
 import registerService from "@/services/CreateStudent.service";
 
 type RegisterError = string; // Assuming your API returns a string message

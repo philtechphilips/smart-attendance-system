@@ -3,7 +3,7 @@ import axios from "axios";
 import { v4 as uuid } from "uuid";
 import { io } from "socket.io-client";
 import { unAuthRoutes } from "@/util/constant";
-import { ToastStatus } from "@/types/User";
+import { ToastStatus } from "../../types/User";
 import { customToast } from "./misc";
 import { errorMessage } from "./error-message";
 
