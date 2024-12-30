@@ -1,12 +1,15 @@
 import makeNetworkCall from "@/helpers/axios-request";
 import { errorMessage } from "@/helpers/error-message";
-import { StudentListParams } from "@/reducer/actions/students.dispatcher";
+import { AttendanceListParams } from "@/reducer/actions/students.dispatcher";
 
 export const getDepartmentAttendances = async (
-  params: Partial<StudentListParams>,
+  params: Partial<AttendanceListParams>,
 ) => {
-  const { currentPage, pageSize } = params;
+  const { currentPage, pageSize, status } = params;
   let queryString = `currentPage=${currentPage}&pageSize=${pageSize}`;
+  if (status) {
+    queryString = `currentPage=${currentPage}&pageSize=${pageSize}&status=${status}`;
+  }
   try {
     const response = await makeNetworkCall({
       url: `/attendances/departmental-attendance?${queryString}`,

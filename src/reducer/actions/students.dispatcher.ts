@@ -7,6 +7,12 @@ export interface StudentListParams {
   currentPage: number;
 }
 
+export interface AttendanceListParams {
+  pageSize: number;
+  currentPage: number;
+  status: string;
+}
+
 export const getStudentsByDepartment = createAsyncThunk(
   "students",
   async (params: Partial<StudentListParams>, thunkAPI) => {

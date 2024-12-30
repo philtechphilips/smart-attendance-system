@@ -24,3 +24,10 @@ export const sidebarMenu = (role: string | undefined) => {
       return ADMIN_SIDEBAR;
   }
 };
+
+export const defaultIncidentAdvanceFilter = {
+  department: "All",
+  category: "All",
+  workflow: "All",
+  nature: "All",
+};
