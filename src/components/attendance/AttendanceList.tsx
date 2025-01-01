@@ -20,6 +20,12 @@ const AttendanceList = () => {
   const [selectedStatus, setSelectedStatus] = useState("all");
   const [showStatus, setShowStatus] = useState(false);
 
+  const options = {
+    hour: "numeric",
+    minute: "numeric",
+    second: "numeric",
+    hour12: true,
+  };
   const handleStatusChange = (value: string) => {
     setSelectedStatus(value);
     filterAttendanceByStatus(value);
@@ -124,30 +130,29 @@ const AttendanceList = () => {
             </div>
           </div>
         </div>
-        <main>
-          <div
-            className="w-full h-[20rem] overflow-scroll text-sm leading-4 pb-[4rem]"
-            onScroll={handleScroll}
-          >
-            {attendances?.length > 0 && (
+
+        <div
+          className="w-full h-[20rem] overflow-auto text-sm leading-4 pb-[4rem]"
+          onScroll={handleScroll}
+        >
+          {attendances?.length > 0 && (
+            <div className="overflow-x-auto">
               <table className="w-full text-xs bg-white border-collapse px-5">
                 <thead className="sticky top-0 bg-white z-[2]">
                   <tr className="text-left">
                     <th className="text-center py-3 leading-6 text-[#4D4D4D]">
                       S/N
                     </th>
-                    <th className="py-3 ">Name</th>
-                    <th>
-                      <div className="flex items-center gap-2">
-                        <span className="">Matric N0.</span>
-                      </div>
-                    </th>
-                    <th className="py-3 ">Source</th>
-                    <th className="py-3 ">Course Code</th>
-                    <th className="py-3 ">Course Name</th>
-                    <th className="py-3 ">Level</th>
-                    <th className="py-3 ">Lecturer</th>
-                    <th className="py-3 ">Status</th>
+                    <th className="py-3 hidden md:table-cell">Name</th>
+                    <th className="py-3 hidden lg:table-cell">Matric N0.</th>
+                    <th className="py-3 hidden lg:table-cell">Source</th>
+                    <th className="py-3 hidden xl:table-cell">Course Code</th>
+                    <th className="py-3 hidden xl:table-cell">Course Name</th>
+                    <th className="py-3">Date</th>
+                    <th className="py-3">Time</th>
+                    <th className="py-3 hidden md:table-cell">Level</th>
+                    <th className="py-3 hidden lg:table-cell">Lecturer</th>
+                    <th className="py-3">Status</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -156,27 +161,46 @@ const AttendanceList = () => {
                       key={index}
                       className="border-t-2 border-[#e6e6e6] text-[#4D4D4D] w-full hover:bg-[#737373] hover:bg-opacity-10 cursor-pointer"
                     >
-                      <td className="py-3 text-center relative">
-                        <p>{index + 1}</p>
-                      </td>
-                      <td className="py-3 ">
+                      <td className="py-3 text-center">{index + 1}</td>
+                      <td className="py-3 hidden md:table-cell">
                         {item?.student?.lastname +
                           " " +
                           item?.student?.firstname +
                           " " +
                           item?.student?.middlename}
                       </td>
-                      <td className="py-3 ">{item?.student?.matricNo}</td>
-                      <td className="py-3 ">Face Recognition</td>
-                      <td className="py-3">{item?.course?.code}</td>
-                      <td className="py-3">{item?.course?.name}</td>
-                      <td className={`py-3`}>{item?.student?.level?.name}</td>
+                      <td className="py-3 hidden lg:table-cell">
+                        {item?.student?.matricNo}
+                      </td>
+                      <td className="py-3 hidden lg:table-cell">
+                        Face Recognition
+                      </td>
+                      <td className="py-3 hidden xl:table-cell">
+                        {item?.course?.code}
+                      </td>
+                      <td className="py-3 hidden xl:table-cell">
+                        {item?.course?.name}
+                      </td>
                       <td className="py-3">
+                        {new Date(item?.timestamp).toISOString().split("T")[0]}
+                      </td>
+                      <td className="py-3">
+                        {new Date(item?.timestamp).toLocaleTimeString("en-US", {
+                          hour: "numeric",
+                          minute: "numeric",
+                          second: "numeric",
+                          hour12: true,
+                        })}
+                      </td>
+                      <td className="py-3 hidden md:table-cell">
+                        {item?.student?.level?.name}
+                      </td>
+                      <td className="py-3 hidden lg:table-cell">
                         {item?.course?.lecturer?.lastname +
                           " " +
                           item?.course?.lecturer?.firstname}
                       </td>
-                      <td className="py-3 ">
+                      <td className="py-3">
                         {item?.status == "present" ? (
                           <div className="px-4 text-white capitalize w-fit bg-green-600 rounded-md py-1">
                             <p>{item?.status}</p>
@@ -191,25 +215,25 @@ const AttendanceList = () => {
                   ))}
                 </tbody>
               </table>
-            )}
-            {allAttendances?.items?.length <= 0 && (
-              <EmptyTable title="No studets" />
-            )}
+            </div>
+          )}
+          {allAttendances?.items?.length <= 0 && (
+            <EmptyTable title="No students" />
+          )}
 
-            {isLoading && (
-              <div
-                className={classNames(
-                  "flex flex-col items-center justify-center w-full",
-                  {
-                    "h-full": allAttendances?.items?.length <= 0,
-                  },
-                )}
-              >
-                <LoaderIcon />
-              </div>
-            )}
-          </div>
-        </main>
+          {isLoading && (
+            <div
+              className={classNames(
+                "flex flex-col items-center justify-center w-full",
+                {
+                  "h-full": allAttendances?.items?.length <= 0,
+                },
+              )}
+            >
+              <LoaderIcon />
+            </div>
+          )}
+        </div>
       </div>
     </>
   );
