@@ -4,22 +4,7 @@ import { useAppDispatch } from "@/reducer/store";
 import EmptyTable from "../emptytable";
 import LoaderIcon from "../icons/LoaderIcon";
 import { getDepartmentAttendances } from "@/services/Attendance";
-
-const statusOptions = [
-  { label: "All", value: "all" },
-  { label: "Present", value: "present" },
-  { label: "Absent", value: "absent" },
-];
-
-const levelOptions = [
-  { label: "All", value: "all" },
-  { label: "ND 1", value: "ND 1" },
-  { label: "ND 2", value: "ND 2" },
-  { label: "ND 3", value: "ND 3" },
-  { label: "HND 1", value: "HND 1" },
-  { label: "HND 2", value: "HND 2" },
-  { label: "HND 3", value: "HND 3" },
-];
+import { levelOptions, statusOptions, periodOptions } from "@/util/constant";
 
 const AttendanceList = () => {
   const dispatch = useAppDispatch();
@@ -29,11 +14,18 @@ const AttendanceList = () => {
   const [paginationValue, setPaginationValue] = useState(1);
   const [selectedStatus, setSelectedStatus] = useState("all");
   const [selectedLevel, setSelectedLevel] = useState("all");
+  const [selectedPeriod, setSelectedPeriod] = useState("week");
   const [showStatus, setShowStatus] = useState(false);
   const [showLevel, setShowLevel] = useState(false);
+  const [showPeriod, setShowPeriod] = useState(false);
 
   const handleStatusChange = (value: string) => {
     setSelectedStatus(value);
+    filterAttendance();
+  };
+
+  const handlePeriodChange = (value: string) => {
+    setSelectedPeriod(value);
     filterAttendance();
   };
 
@@ -74,6 +66,7 @@ const AttendanceList = () => {
       pageSize: 10,
       status: selectedStatus,
       level: selectedLevel !== "all" ? selectedLevel : undefined,
+      period: selectedPeriod ? selectedPeriod : undefined,
     });
     setAttendance((prevAttendances: any) => {
       const existingIds = new Set(
@@ -90,7 +83,13 @@ const AttendanceList = () => {
   useEffect(() => {
     fetchAttendance();
     setIsLoading(false);
-  }, [dispatch, paginationValue, selectedStatus, selectedLevel]);
+  }, [
+    dispatch,
+    paginationValue,
+    selectedStatus,
+    selectedLevel,
+    selectedPeriod,
+  ]);
 
   return (
     <div className="relative event__list__container">
@@ -156,6 +155,40 @@ const AttendanceList = () => {
                           : ""
                       }`}
                       onClick={() => handleLevelChange(option.value)}
+                    >
+                      {option.label}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+
+          <div className="text-left">
+            <div>
+              <button
+                type="button"
+                className="inline-flex justify-between w-40 px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50"
+                onClick={() => setShowPeriod(!showPeriod)}
+              >
+                Period:{" "}
+                {
+                  periodOptions.find((opt) => opt.value === selectedPeriod)
+                    ?.label
+                }
+                <i className="ri-arrow-drop-down-line" aria-hidden="true"></i>
+              </button>
+              {showPeriod && (
+                <div className="absolute right-4 w-48 mt-2 top-12 z-[10000] bg-white border border-gray-300 divide-y divide-gray-100 rounded-md shadow-lg focus:outline-none">
+                  {periodOptions.map((option) => (
+                    <button
+                      key={option.value}
+                      className={`block w-full px-4 py-2 text-sm text-left hover:bg-gray-100 ${
+                        selectedPeriod === option.value
+                          ? "bg-gray-200 font-semibold"
+                          : ""
+                      }`}
+                      onClick={() => handlePeriodChange(option.value)}
                     >
                       {option.label}
                     </button>

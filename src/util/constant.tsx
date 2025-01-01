@@ -31,3 +31,25 @@ export const defaultIncidentAdvanceFilter = {
   workflow: "All",
   nature: "All",
 };
+
+export const statusOptions = [
+  { label: "All", value: "all" },
+  { label: "Present", value: "present" },
+  { label: "Absent", value: "absent" },
+];
+
+export const levelOptions = [
+  { label: "All", value: "all" },
+  { label: "ND 1", value: "ND 1" },
+  { label: "ND 2", value: "ND 2" },
+  { label: "ND 3", value: "ND 3" },
+  { label: "HND 1", value: "HND 1" },
+  { label: "HND 2", value: "HND 2" },
+  { label: "HND 3", value: "HND 3" },
+];
+
+export const periodOptions = [
+  { label: "Week", value: "week" },
+  { label: "Month", value: "month" },
+  { label: "Year", value: "year" },
+];
