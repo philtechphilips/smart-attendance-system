@@ -5,13 +5,13 @@ importScripts(
 
 // Replace these with your own Firebase config keys...
 const firebaseConfig = {
-  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
-  authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
-  projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
-  storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
-  messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MSG_SENDER_ID,
-  appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
-  measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID,
+  apiKey: "AIzaSyDxDMbjTFYxvVfdnImooAR_3AA4pHCCYBo",
+  authDomain: "smart-attendance-system-d213b.firebaseapp.com",
+  projectId: "smart-attendance-system-d213b",
+  storageBucket: "smart-attendance-system-d213b.firebasestorage.app",
+  messagingSenderId: "385140871959",
+  appId: "1:385140871959:web:8cd063f516902d6e191d52",
+  measurementId: "G-FQ81MFLJXC",
 };
 
 firebase.initializeApp(firebaseConfig);

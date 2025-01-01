@@ -5,11 +5,15 @@ import { AttendanceListParams } from "@/reducer/actions/students.dispatcher";
 export const getDepartmentAttendances = async (
   params: Partial<AttendanceListParams>,
 ) => {
-  const { currentPage, pageSize, status } = params;
+  const { currentPage, pageSize, status, level } = params;
   let queryString = `currentPage=${currentPage}&pageSize=${pageSize}`;
   if (status) {
     queryString = `currentPage=${currentPage}&pageSize=${pageSize}&status=${status}`;
   }
+  if (level) {
+    queryString = `${queryString}&level=${level}`;
+  }
+
   try {
     const response = await makeNetworkCall({
       url: `/attendances/departmental-attendance?${queryString}`,
