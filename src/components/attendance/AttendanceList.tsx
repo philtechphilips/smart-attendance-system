@@ -64,7 +64,6 @@ const AttendanceList = () => {
   };
 
   const attendanceDetails = (id: string) => {
-    console.log(id, "id............");
     router.push(`/dashboard/attendance/${id}`);
   };
 

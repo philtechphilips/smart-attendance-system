@@ -24,7 +24,18 @@ export const getDepartmentAttendances = async (
     const response = await makeNetworkCall({
       url: `/attendances/departmental-attendance?${queryString}`,
     });
-    console.log(response.data, "res ....................");
+    return response.data;
+  } catch (err) {
+    const message = errorMessage(err);
+    throw new Error(message ?? "Network error");
+  }
+};
+
+export const getAttendanceDetails = async (id: any) => {
+  try {
+    const response = await makeNetworkCall({
+      url: `/attendances/${id}`,
+    });
     return response.data;
   } catch (err) {
     const message = errorMessage(err);
