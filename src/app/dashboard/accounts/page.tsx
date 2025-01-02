@@ -1,9 +1,5 @@
 "use client";
 import DashboardLayout from "@/layouts/dasboard";
-import Analytics from "@/components/dashboard/home/Analytics";
-import axios from "axios";
-import LoaderIcon from "@/components/icons/LoaderIcon";
-import SolidDivider from "@/components/icons/SolidDivider";
 import StudentList from "@/components/studdent-list";
 
 export default function Accounts() {

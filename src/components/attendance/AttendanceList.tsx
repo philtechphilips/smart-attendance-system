@@ -1,3 +1,4 @@
+"use client";
 import React, { useEffect, useState } from "react";
 import classNames from "classnames";
 import { useAppDispatch } from "@/reducer/store";
@@ -5,6 +6,7 @@ import EmptyTable from "../emptytable";
 import LoaderIcon from "../icons/LoaderIcon";
 import { getDepartmentAttendances } from "@/services/Attendance";
 import { levelOptions, statusOptions, periodOptions } from "@/util/constant";
+import { useRouter } from "next/navigation";
 
 const AttendanceList = () => {
   const dispatch = useAppDispatch();
@@ -18,6 +20,7 @@ const AttendanceList = () => {
   const [showStatus, setShowStatus] = useState(false);
   const [showLevel, setShowLevel] = useState(false);
   const [showPeriod, setShowPeriod] = useState(false);
+  const router = useRouter();
 
   const handleStatusChange = (value: string) => {
     setSelectedStatus(value);
@@ -58,6 +61,11 @@ const AttendanceList = () => {
       setPaginationValue((prev) => prev + 1);
       setIsLoading(true);
     }
+  };
+
+  const attendanceDetails = (id: string) => {
+    console.log(id, "id............");
+    router.push(`/dashboard/attendance/${id}`);
   };
 
   const fetchAttendance = async () => {
@@ -228,6 +236,7 @@ const AttendanceList = () => {
                 {attendances?.map((item: any, index: number) => (
                   <tr
                     key={index}
+                    onClick={() => attendanceDetails(item?.id)}
                     className="border-t-2 border-[#e6e6e6] text-[#4D4D4D] w-full hover:bg-[#737373] hover:bg-opacity-10 cursor-pointer"
                   >
                     <td className="py-3 text-center">{index + 1}</td>
