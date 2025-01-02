@@ -114,7 +114,7 @@ const AttendanceList = () => {
                 <i className="ri-arrow-drop-down-line" aria-hidden="true"></i>
               </button>
               {showStatus && (
-                <div className="absolute right-4 w-48 mt-2 top-12 z-[10000] bg-white border border-gray-300 divide-y divide-gray-100 rounded-md shadow-lg focus:outline-none">
+                <div className="absolute right-96 w-48 mt-2 top-12 z-[10000] bg-white border border-gray-300 divide-y divide-gray-100 rounded-md shadow-lg focus:outline-none">
                   {statusOptions.map((option) => (
                     <button
                       key={option.value}
@@ -145,7 +145,7 @@ const AttendanceList = () => {
                 <i className="ri-arrow-drop-down-line" aria-hidden="true"></i>
               </button>
               {showLevel && (
-                <div className="absolute right-4 w-48 mt-2 top-12 z-[10000] bg-white border border-gray-300 divide-y divide-gray-100 rounded-md shadow-lg focus:outline-none">
+                <div className="absolute right-48 w-48 mt-2 top-12 z-[10000] bg-white border border-gray-300 divide-y divide-gray-100 rounded-md shadow-lg focus:outline-none">
                   {levelOptions.map((option) => (
                     <button
                       key={option.value}
