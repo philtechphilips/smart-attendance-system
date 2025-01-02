@@ -5,6 +5,7 @@ import DashboardLayout from "@/layouts/dasboard";
 import { getAttendanceDetails } from "@/services/Attendance";
 import { useParams, useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
+import { toast } from "react-toastify";
 
 const AttendanceDetails = () => {
   const params = useParams();
@@ -17,9 +18,9 @@ const AttendanceDetails = () => {
     setIsLoading(true);
     try {
       const res = await getAttendanceDetails(attendanceId);
-      console.log(res);
       setAttendanceDetails(res);
     } catch (error) {
+      toast.error("Unable to fetch atendance details");
     } finally {
       setIsLoading(false);
     }
@@ -27,7 +28,7 @@ const AttendanceDetails = () => {
 
   useEffect(() => {
     fetchAttendanceDetails();
-  }, [attendanceId]);
+  }, []);
 
   return (
     <DashboardLayout pageTitle="Attendance Details">

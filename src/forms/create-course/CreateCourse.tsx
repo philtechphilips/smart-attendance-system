@@ -31,7 +31,6 @@ export default function CreateCourseForm({ closeForm }: any) {
     (state: RootState) => state.departments,
   );
   const [staffs, setStaffs] = useState<any>([]);
-  console.log(staffs);
   const allStaffs = async () => {
     try {
       const response = await getDepartmentStaff();
