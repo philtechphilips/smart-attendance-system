@@ -31,6 +31,20 @@ export const createCourses = async (data: any) => {
   }
 };
 
+export const getCourseDetails = async (courseId: any) => {
+  try {
+    const response = await makeNetworkCall({
+      url: `/courses/course-attendance/${courseId}`,
+      method: "GET",
+    });
+
+    return response.data;
+  } catch (err) {
+    const message = errorMessage(err);
+    throw new Error(message ?? "Network error");
+  }
+};
+
 export const deleteCourse = async (id: string) => {
   try {
     const response = await makeNetworkCall({
