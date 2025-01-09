@@ -18,6 +18,20 @@ export const getDepartmentStudents = async (
   }
 };
 
+export const getStudentAttendanceDetails = async (studentId: any) => {
+  try {
+    const response = await makeNetworkCall({
+      url: `/attendances/student-attendance/${studentId}`,
+      method: "GET",
+    });
+
+    return response.data;
+  } catch (err) {
+    const message = errorMessage(err);
+    throw new Error(message ?? "Network error");
+  }
+};
+
 const studentsService = {
   getDepartmentStudents,
 };
