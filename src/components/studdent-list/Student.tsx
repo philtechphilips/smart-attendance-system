@@ -4,6 +4,7 @@ import { useAppDispatch } from "@/reducer/store";
 import EmptyTable from "../emptytable";
 import LoaderIcon from "../icons/LoaderIcon";
 import { getDepartmentStudents } from "@/services/Students.service";
+import { useRouter } from "next/navigation";
 
 const Students = () => {
   const dispatch = useAppDispatch();
@@ -11,6 +12,7 @@ const Students = () => {
   const [students, setStudents] = useState<any>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [paginationValue, setPaginationValue] = useState(1);
+  const router = useRouter();
 
   const handleScroll = (e: any) => {
     const bottom =
@@ -81,6 +83,9 @@ const Students = () => {
                 {students?.map((student: any, index: number) => (
                   <tr
                     key={index}
+                    onClick={() =>
+                      router.push(`/dashboard/accounts/students/${student?.id}`)
+                    }
                     className="border-t-2 border-[#e6e6e6] text-[#4D4D4D] w-full hover:bg-[#737373] hover:bg-opacity-10 cursor-pointer"
                   >
                     <td className="py-3 text-center relative">
