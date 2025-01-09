@@ -1,3 +1,4 @@
+"use client";
 import React, { useEffect, useState } from "react";
 import Swal from "sweetalert2";
 import classNames from "classnames";
@@ -8,6 +9,7 @@ import { getCoursesByDepartment } from "@/reducer/actions/courses.dispatcher";
 import { deleteCourse } from "@/services/courses.service";
 import BaseButton from "../buttons/base-button/BaseButton";
 import CreateCourseForm from "@/forms/create-course/CreateCourse";
+import { useRouter } from "next/navigation";
 
 const CourseList = () => {
   const dispatch = useAppDispatch();
@@ -16,6 +18,7 @@ const CourseList = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [paginationValue, setPaginationValue] = useState(1);
   const [showCreateModal, setShowCreateModal] = useState(false);
+  const router = useRouter();
 
   const handleScroll = (e: any) => {
     const bottom =
@@ -123,6 +126,7 @@ const CourseList = () => {
                 {allCourses?.items?.map((course: any, index: number) => (
                   <tr
                     key={index}
+                    onClick={() => router.push(`academics/${course?.id}`)}
                     className="border-t-2 border-[#e6e6e6] text-[#4D4D4D] w-full hover:bg-[#737373] hover:bg-opacity-10 cursor-pointer"
                   >
                     <td className="py-3 pr-4 text-center relative">

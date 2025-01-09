@@ -64,15 +64,15 @@ const Sidebar = () => {
               </li>
             );
           })}
-        </ul>
 
-        <div
-          onClick={logOut}
-          className="flex cursor-pointer items-center absolute bottom-20 gap-2 px-3 text-gray-700"
-        >
-          <i className="ri-logout-circle-r-line"></i>
-          <p className="text-sm ">Logout</p>
-        </div>
+          <li
+            onClick={logOut}
+            className="flex cursor-pointer items-center absolute bottom-20 gap-2 px-3 text-gray-700"
+          >
+            <i className="ri-logout-circle-r-line"></i>
+            <p className="text-sm ">Logout</p>
+          </li>
+        </ul>
       </div>
     </aside>
   );
