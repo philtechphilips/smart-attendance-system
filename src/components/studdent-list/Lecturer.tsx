@@ -1,16 +1,17 @@
 import React, { useEffect, useState } from "react";
 import classNames from "classnames";
 import { RootState, useAppDispatch, useAppSelector } from "@/reducer/store";
-import { getStudentsByDepartment } from "@/reducer/actions/students.dispatcher";
 import EmptyTable from "../emptytable";
 import LoaderIcon from "../icons/LoaderIcon";
 import SolidDivider from "../icons/SolidDivider";
 import { getStaffsByDepartment } from "@/reducer/actions/lecturer.dispatcher";
+import { useRouter } from "next/navigation";
 
 const LecturerList = () => {
   const dispatch = useAppDispatch();
   const [isLoading, setIsLoading] = useState(false);
   const [paginationValue, setPaginationValue] = useState(1);
+  const router = useRouter();
 
   const { allStaffs } = useAppSelector((state: RootState) => state.staffs);
 
@@ -67,25 +68,28 @@ const LecturerList = () => {
                 </tr>
               </thead>
               <tbody>
-                {allStaffs?.items?.map((student: any, index: number) => (
+                {allStaffs?.items?.map((staff: any, index: number) => (
                   <tr
                     key={index}
+                    onClick={() =>
+                      router.push(`/dashboard/accounts/staff/${staff?.id}`)
+                    }
                     className="border-t-2 border-[#e6e6e6] text-[#4D4D4D] w-full hover:bg-[#737373] hover:bg-opacity-10 cursor-pointer"
                   >
                     <td className="py-3 text-center relative">
                       <p>{index + 1}</p>
                     </td>
                     <td className="py-3 ">
-                      {student?.lastname +
+                      {staff?.lastname +
                         " " +
-                        student?.firstname +
+                        staff?.firstname +
                         " " +
-                        student?.middlename}
+                        staff?.middlename}
                     </td>
-                    <td className="py-3">{student?.email}</td>
-                    <td className="py-3">{student?.phone}</td>
-                    <td className="py-3">{student?.level}</td>
-                    <td className="py-3">{student?.department?.name}</td>
+                    <td className="py-3">{staff?.email}</td>
+                    <td className="py-3">{staff?.phone}</td>
+                    <td className="py-3">{staff?.level}</td>
+                    <td className="py-3">{staff?.department?.name}</td>
                   </tr>
                 ))}
               </tbody>
