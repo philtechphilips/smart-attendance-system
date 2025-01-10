@@ -28,6 +28,18 @@ export const getDepartmentStaff = async () => {
   }
 };
 
+export const getStaffCourses = async (staffId: any) => {
+  try {
+    const response = await makeNetworkCall({
+      url: `/staffs/courses/${staffId}`,
+    });
+    return response.data;
+  } catch (err) {
+    const message = errorMessage(err);
+    throw new Error(message ?? "Network error");
+  }
+};
+
 const StaffsService = {
   getDepartmentStaffs,
 };

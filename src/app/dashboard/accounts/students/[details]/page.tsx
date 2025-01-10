@@ -10,7 +10,7 @@ import { getStudentAttendanceDetails } from "@/services/Students.service";
 import EmptyTable from "@/components/emptytable";
 import classNames from "classnames";
 
-const CourseDetails = () => {
+const StudentAttendanceDetails = () => {
   const params = useParams();
   const studentId = params?.details;
   const router = useRouter();
@@ -55,7 +55,7 @@ const CourseDetails = () => {
   }
 
   return (
-    <DashboardLayout pageTitle="Course Details">
+    <DashboardLayout pageTitle="Student Details">
       {attendanceDetails && !isLoading ? (
         <div className="w-full md:pl-[260px] pt-4 px-5 bg-neutral-100 min-h-screen overflow-x-scroll pr-5">
           <div
@@ -136,7 +136,11 @@ const CourseDetails = () => {
                           </td>
                           <td className="py-3 ">{item?.present}</td>
                           <td className="py-3">{item?.absent}</td>
-                          <td className={`py-1 px-5 rounded w-fit text-white ${item.percentage < 75 ? 'bg-red-600' : 'bg-green-600'}`}>{item?.percentage}</td>
+                          <td
+                            className={`py-1 px-5 rounded w-fit text-white ${item.percentage < 75 ? "bg-red-600" : "bg-green-600"}`}
+                          >
+                            {item?.percentage}
+                          </td>
                         </tr>
                       ),
                     )}
@@ -172,4 +176,4 @@ const CourseDetails = () => {
   );
 };
 
-export default CourseDetails;
+export default StudentAttendanceDetails;
