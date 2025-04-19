@@ -23,7 +23,7 @@ const Attendances = () => {
           >
             Attendance
           </span>
-          <span
+          {/* <span
             className={`${
               activeEvent === 1 &&
               "border-b-4 px-4 border-[#4253F0] rounded-b-sm font_gilroy_semi-bold text-base leading-6"
@@ -31,7 +31,7 @@ const Attendances = () => {
             onClick={() => handleActiveEvent(1)}
           >
             Dumped Attendance
-          </span>
+          </span> */}
         </div>
       </div>
 

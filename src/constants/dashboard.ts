@@ -1,7 +1,7 @@
 export const STUDENT_SIDEBAR = [
   {
     title: "Dashboard",
-    url: "/dashboard/home",
+    url: "/student/dashboard",
     icon: "ri-dashboard-horizontal-line",
   },
   {
@@ -14,12 +14,17 @@ export const STUDENT_SIDEBAR = [
 export const LECTURER_SIDEBAR = [
   {
     title: "Dashboard",
-    url: "/dashboard/home",
+    url: "/lecturer/dashboard",
     icon: "ri-dashboard-horizontal-line",
   },
   {
     title: "Attendance",
-    url: "/student/attendance",
+    url: "/dashboard/attendance",
+    icon: "ri-task-line",
+  },
+  {
+    title: "Timetable",
+    url: "/lecturer/timetable",
     icon: "ri-task-line",
   },
 ];
