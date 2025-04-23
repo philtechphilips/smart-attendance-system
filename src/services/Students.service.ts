@@ -3,10 +3,17 @@ import { errorMessage } from "@/helpers/error-message";
 import { StudentListParams } from "@/reducer/actions/students.dispatcher";
 
 export const getDepartmentStudents = async (
-  params: Partial<StudentListParams>,
+  params?: Partial<StudentListParams>,
 ) => {
-  const { currentPage, pageSize } = params;
-  let queryString = `currentPage=${currentPage}&pageSize=${pageSize}`;
+  let queryString = "";
+  if (params) {
+    const queryParams = new URLSearchParams();
+    if (params.currentPage)
+      queryParams.append("currentPage", params.currentPage.toString());
+    if (params.pageSize)
+      queryParams.append("pageSize", params.pageSize.toString());
+    queryString = queryParams.toString();
+  }
   try {
     const response = await makeNetworkCall({
       url: `/students/departmental-students?${queryString}`,

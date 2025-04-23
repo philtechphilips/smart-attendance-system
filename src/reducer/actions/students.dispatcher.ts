@@ -3,8 +3,8 @@ import studentsService from "@/services/Students.service";
 import { createAsyncThunk } from "@reduxjs/toolkit";
 
 export interface StudentListParams {
-  pageSize: number;
-  currentPage: number;
+  pageSize?: number;
+  currentPage?: number;
 }
 
 export interface AttendanceListParams {

@@ -23,7 +23,7 @@ export default function DashboardLayout({
 
   return (
     <main className="w-full">
-      <div className="relative w-full">
+      <div className="w-full relative ">
         <Sidebar />
         <Navbar pageTitle={pageTitle} />
         <div className="w-full">{children}</div>
