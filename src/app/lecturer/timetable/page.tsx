@@ -12,6 +12,9 @@ import { getLecturerCourses } from "@/services/courses.service";
 import EmptyTable from "@/components/emptytable";
 import { STUDENTS } from "@/constants/students";
 import { getDepartmentStudents } from "@/services/Students.service";
+import io from "socket.io-client"; // Import Socket.IO client
+
+const socket = io(process.env.NEXT_PUBLIC_BE_URL); // Replace with your backend URL
 
 export default function AttendanceModule() {
   return (
@@ -40,6 +43,7 @@ const LiveFeedModal = ({ course, onClose, onCapture }: LiveFeedModalProps) => {
     useState<any>(null);
   const [studentDescriptors, setStudentDescriptors] = useState<any[]>([]);
   const [studentsList, setStudentsList] = useState<any>([]);
+  const [peerConnection, setPeerConnection] = useState<RTCPeerConnection | null>(null);
 
   const fetchDepartmentStudents = async () => {
     setIsLoading(true);
@@ -128,7 +132,7 @@ const LiveFeedModal = ({ course, onClose, onCapture }: LiveFeedModalProps) => {
   useEffect(() => {
     let isMounted = true;
 
-    const startCamera = async () => {
+    const startCameraAndWebRTC = async () => {
       if (!modelsLoaded) return;
 
       try {
@@ -139,22 +143,70 @@ const LiveFeedModal = ({ course, onClose, onCapture }: LiveFeedModalProps) => {
         if (isMounted && videoRef.current) {
           videoRef.current.srcObject = mediaStream;
           setStream(mediaStream);
+
+          // Initialize WebRTC PeerConnection
+          const pc = new RTCPeerConnection();
+          setPeerConnection(pc);
+
+          // Add local stream to PeerConnection
+          mediaStream.getTracks().forEach((track) => pc.addTrack(track, mediaStream));
+
+          // Handle ICE candidates
+          pc.onicecandidate = (event) => {
+            if (event.candidate) {
+              socket.emit("ice-candidate", { candidate: event.candidate, room: course.id });
+            }
+          };
+
+          // Handle remote stream (if needed)
+          pc.ontrack = (event) => {
+            console.log("Remote stream received:", event.streams[0]);
+          };
+
+          // Join the signaling room
+          socket.emit("join-room", course.id);
+
+          // Handle incoming offer
+          socket.on("offer", async ({ offer, sender }) => {
+            await pc.setRemoteDescription(new RTCSessionDescription(offer));
+            const answer = await pc.createAnswer();
+            await pc.setLocalDescription(answer);
+            socket.emit("answer", { answer, sender });
+          });
+
+          // Handle incoming answer
+          socket.on("answer", async ({ answer }) => {
+            await pc.setRemoteDescription(new RTCSessionDescription(answer));
+          });
+
+          // Handle incoming ICE candidates
+          socket.on("ice-candidate", async ({ candidate }) => {
+            await pc.addIceCandidate(new RTCIceCandidate(candidate));
+          });
+
+          // Create and send an offer
+          const offer = await pc.createOffer();
+          await pc.setLocalDescription(offer);
+          socket.emit("offer", { offer, room: course.id });
         }
       } catch (err) {
-        console.error("Camera error:", err);
+        console.error("Camera/WebRTC error:", err);
         if (isMounted) {
-          setError("Could not access camera. Please check permissions.");
+          setError("Could not access camera or initialize WebRTC.");
         }
       }
     };
 
     if (modelsLoaded) {
-      startCamera();
+      startCameraAndWebRTC();
     }
 
     return () => {
       if (stream) {
         stream.getTracks().forEach((track) => track.stop());
+      }
+      if (peerConnection) {
+        peerConnection.close();
       }
       isMounted = false;
     };
