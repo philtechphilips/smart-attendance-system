@@ -19,8 +19,18 @@ export const LECTURER_SIDEBAR = [
   },
   {
     title: "Attendance",
-    url: "/dashboard/attendance",
+    url: "/lecturer/attendance",
     icon: "ri-task-line",
+  },
+  {
+    title: "Courses",
+    url: "/lecturer/courses",
+    icon: "ri-graduation-cap-line",
+  },
+  {
+    title: "Students",
+    url: "/lecturer/students",
+    icon: "ri-user-line",
   },
   {
     title: "Timetable",

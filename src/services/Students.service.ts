@@ -39,8 +39,33 @@ export const getStudentAttendanceDetails = async (studentId: any) => {
   }
 };
 
+export const getLecturerStudents = async (
+  params?: Partial<StudentListParams>,
+) => {
+  let queryString = "";
+  if (params) {
+    const queryParams = new URLSearchParams();
+    if (params.currentPage)
+      queryParams.append("currentPage", params.currentPage.toString());
+    if (params.pageSize)
+      queryParams.append("pageSize", params.pageSize.toString());
+    if (params.search) queryParams.append("search", params.search.toString());
+    queryString = queryParams.toString();
+  }
+  try {
+    const response = await makeNetworkCall({
+      url: `/students/lecturer-students?${queryString}`,
+    });
+    return response.data;
+  } catch (err) {
+    const message = errorMessage(err);
+    throw new Error(message ?? "Network error");
+  }
+};
+
 const studentsService = {
   getDepartmentStudents,
+  getLecturerStudents,
 };
 
 export default studentsService;

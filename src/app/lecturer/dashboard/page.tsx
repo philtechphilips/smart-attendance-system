@@ -28,7 +28,7 @@ ChartJS.register(
   BarElement,
   Title,
   Tooltip,
-  Legend
+  Legend,
 );
 
 type TimeRange = "week" | "month" | "year";
@@ -75,8 +75,14 @@ const Dashboard = () => {
 
     insights.attendanceData.forEach((item: AttendanceDataItem) => {
       labels.push(item.label);
-      present.push(typeof item.present === "string" ? parseInt(item.present) : item.present);
-      absent.push(typeof item.absent === "string" ? parseInt(item.absent) : item.absent);
+      present.push(
+        typeof item.present === "string"
+          ? parseInt(item.present)
+          : item.present,
+      );
+      absent.push(
+        typeof item.absent === "string" ? parseInt(item.absent) : item.absent,
+      );
     });
 
     return { labels, present, absent };
@@ -119,11 +125,12 @@ const Dashboard = () => {
       x: {
         title: {
           display: true,
-          text: timeRange === "week" 
-            ? "Days of Week" 
-            : timeRange === "month" 
-            ? "Days of Month" 
-            : "Months",
+          text:
+            timeRange === "week"
+              ? "Days of Week"
+              : timeRange === "month"
+                ? "Days of Month"
+                : "Months",
         },
       },
       y: {
@@ -255,9 +262,13 @@ const Dashboard = () => {
                     <img src="" alt="" />
                   </div>
                   <div className="ml-4">
-                    <p className="text-lg text-gray-800 font-semibold">Desmont Eliot</p>
+                    <p className="text-lg text-gray-800 font-semibold">
+                      Desmont Eliot
+                    </p>
                     <p className="text-sm text-gray-500">Role: Lecturer</p>
-                    <p className="text-sm text-gray-700">Modified Year Two Timetable</p>
+                    <p className="text-sm text-gray-700">
+                      Modified Year Two Timetable
+                    </p>
                     <p className="text-sm text-gray-500">5 hours ago</p>
                   </div>
                 </div>
@@ -267,9 +278,13 @@ const Dashboard = () => {
                     <img src="" alt="" />
                   </div>
                   <div className="ml-4">
-                    <p className="text-lg text-gray-800 font-semibold">Desmont Eliot</p>
+                    <p className="text-lg text-gray-800 font-semibold">
+                      Desmont Eliot
+                    </p>
                     <p className="text-sm text-gray-500">Role: Lecturer</p>
-                    <p className="text-sm text-gray-700">Modified Year Two Timetable</p>
+                    <p className="text-sm text-gray-700">
+                      Modified Year Two Timetable
+                    </p>
                     <p className="text-sm text-gray-500">5 hours ago</p>
                   </div>
                 </div>
@@ -279,9 +294,13 @@ const Dashboard = () => {
                     <img src="" alt="" />
                   </div>
                   <div className="ml-4">
-                    <p className="text-lg text-gray-800 font-semibold">Desmont Eliot</p>
+                    <p className="text-lg text-gray-800 font-semibold">
+                      Desmont Eliot
+                    </p>
                     <p className="text-sm text-gray-500">Role: Lecturer</p>
-                    <p className="text-sm text-gray-700">Modified Year Two Timetable</p>
+                    <p className="text-sm text-gray-700">
+                      Modified Year Two Timetable
+                    </p>
                     <p className="text-sm text-gray-500">5 hours ago</p>
                   </div>
                 </div>
@@ -291,9 +310,13 @@ const Dashboard = () => {
                     <img src="" alt="" />
                   </div>
                   <div className="ml-4">
-                    <p className="text-lg text-gray-800 font-semibold">Desmont Eliot</p>
+                    <p className="text-lg text-gray-800 font-semibold">
+                      Desmont Eliot
+                    </p>
                     <p className="text-sm text-gray-500">Role: Lecturer</p>
-                    <p className="text-sm text-gray-700">Modified Year Two Timetable</p>
+                    <p className="text-sm text-gray-700">
+                      Modified Year Two Timetable
+                    </p>
                     <p className="text-sm text-gray-500">5 hours ago</p>
                   </div>
                 </div>
@@ -303,7 +326,9 @@ const Dashboard = () => {
 
           <section className="flex md:flex-row flex-col gap-4 items-start">
             <div className="w-full md:w-full h-fit table__container table__container_full text-sm leading-4 pb-[4rem]">
-              <h6 className="py-2 font-semibold text-gray-700 text-xl mb-2">Students</h6>
+              <h6 className="py-2 font-semibold text-gray-700 text-xl mb-2">
+                Students
+              </h6>
               {insights?.studentList?.length > 0 ? (
                 <table className="w-full text-sm leading-6 bg-white border-collapse">
                   <thead className="sticky top-0 bg-white z-[2]">
@@ -335,33 +360,25 @@ const Dashboard = () => {
                     </tr>
                   </thead>
                   <tbody>
-                    {insights.studentList.map(
-                      (item: any, index: number) => (
-                        <tr
-                          key={index}
-                          className="border-t-2 border-[#e6e6e6] text-[#4D4D4D] w-full hover:bg-[#737373] hover:bg-opacity-10 cursor-pointer"
-                        >
-                          <td className="py-3 pr-4 text-center relative">
-                            <p>{index + 1}</p>
-                          </td>
-                          <td className="py-3 text-left">
-                            {item?.firstname + ' ' + item?.lastname} 
-                          </td>
-                          <td className="py-3 text-left">
-                            {item?.matricNo}
-                          </td>
-                          <td className="py-3 text-left">
-                            {item?.department?.name}
-                          </td>
-                          <td className="py-3 text-left">
-                            {item?.level?.name}
-                          </td>
-                          <td className="py-3 text-left">
-                            {item?.phone}
-                          </td>
-                        </tr>
-                      )
-                    )}
+                    {insights.studentList.map((item: any, index: number) => (
+                      <tr
+                        key={index}
+                        className="border-t-2 border-[#e6e6e6] text-[#4D4D4D] w-full hover:bg-[#737373] hover:bg-opacity-10 cursor-pointer"
+                      >
+                        <td className="py-3 pr-4 text-center relative">
+                          <p>{index + 1}</p>
+                        </td>
+                        <td className="py-3 text-left">
+                          {item?.firstname + " " + item?.lastname}
+                        </td>
+                        <td className="py-3 text-left">{item?.matricNo}</td>
+                        <td className="py-3 text-left">
+                          {item?.department?.name}
+                        </td>
+                        <td className="py-3 text-left">{item?.level?.name}</td>
+                        <td className="py-3 text-left">{item?.phone}</td>
+                      </tr>
+                    ))}
                   </tbody>
                 </table>
               ) : (

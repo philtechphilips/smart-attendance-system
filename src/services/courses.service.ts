@@ -45,10 +45,44 @@ export const getCourseDetails = async (courseId: any) => {
   }
 };
 
-export const getLecturerCourses = async (courseId: any) => {
+export const getLecturerCourses = async (search: any) => {
   try {
     const response = await makeNetworkCall({
-      url: `/courses/lecturer/${courseId}`,
+      url: `/courses/lecturer?search=${search?.search ?? ""}`,
+      method: "GET",
+    });
+
+    return response.data;
+  } catch (err) {
+    const message = errorMessage(err);
+    throw new Error(message ?? "Network error");
+  }
+};
+
+export const getCourseAttendance = async (
+  id: any,
+  startDate: string,
+  endDate: string,
+  search: any,
+  download: boolean,
+) => {
+  try {
+    const response = await makeNetworkCall({
+      url: `/courses/course-attendance/${id}?startDate=${startDate}&endDate=${endDate}&search=${search ?? ""}&download=${download}`,
+      method: "GET",
+    });
+
+    return response.data;
+  } catch (err) {
+    const message = errorMessage(err);
+    throw new Error(message ?? "Network error");
+  }
+};
+
+export const downloadCourseAttendance = async (id: any) => {
+  try {
+    const response = await makeNetworkCall({
+      url: `/courses/course-attendance/${id}/download`,
       method: "GET",
     });
 

@@ -5,6 +5,7 @@ import { createAsyncThunk } from "@reduxjs/toolkit";
 export interface StudentListParams {
   pageSize?: number;
   currentPage?: number;
+  search?: string;
 }
 
 export interface AttendanceListParams {

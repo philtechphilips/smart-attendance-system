@@ -6,8 +6,11 @@ const socket = io(process.env.NEXT_PUBLIC_BE_URL); // Replace with your backend 
 
 export default function StreamingPage() {
   const videoRef = useRef<HTMLVideoElement>(null);
-  const [peerConnection, setPeerConnection] = useState<RTCPeerConnection | null>(null);
-  const [roomId, setRoomId] = useState<string>("83ca9237-1448-4a00-a983-4fc5645ed6fa"); // Room ID to join
+  const [peerConnection, setPeerConnection] =
+    useState<RTCPeerConnection | null>(null);
+  const [roomId, setRoomId] = useState<string>(
+    "83ca9237-1448-4a00-a983-4fc5645ed6fa",
+  ); // Room ID to join
 
   useEffect(() => {
     const pc = new RTCPeerConnection();

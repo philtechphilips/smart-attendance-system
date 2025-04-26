@@ -43,7 +43,8 @@ const LiveFeedModal = ({ course, onClose, onCapture }: LiveFeedModalProps) => {
     useState<any>(null);
   const [studentDescriptors, setStudentDescriptors] = useState<any[]>([]);
   const [studentsList, setStudentsList] = useState<any>([]);
-  const [peerConnection, setPeerConnection] = useState<RTCPeerConnection | null>(null);
+  const [peerConnection, setPeerConnection] =
+    useState<RTCPeerConnection | null>(null);
 
   const fetchDepartmentStudents = async () => {
     setIsLoading(true);
@@ -149,12 +150,17 @@ const LiveFeedModal = ({ course, onClose, onCapture }: LiveFeedModalProps) => {
           setPeerConnection(pc);
 
           // Add local stream to PeerConnection
-          mediaStream.getTracks().forEach((track) => pc.addTrack(track, mediaStream));
+          mediaStream
+            .getTracks()
+            .forEach((track) => pc.addTrack(track, mediaStream));
 
           // Handle ICE candidates
           pc.onicecandidate = (event) => {
             if (event.candidate) {
-              socket.emit("ice-candidate", { candidate: event.candidate, room: course.id });
+              socket.emit("ice-candidate", {
+                candidate: event.candidate,
+                room: course.id,
+              });
             }
           };
 
