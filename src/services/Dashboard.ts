@@ -36,3 +36,15 @@ export const getDasboardPerf = async () => {
     throw new Error(message ?? "Network error");
   }
 };
+
+export const getStaffDasboard = async (period: string) => {
+  try {
+    const response = await makeNetworkCall({
+      url: `/dashboard/staff-dashboard?period=${period}`,
+    });
+    return response.data;
+  } catch (err) {
+    const message = errorMessage(err);
+    throw new Error(message ?? "Network error");
+  }
+};

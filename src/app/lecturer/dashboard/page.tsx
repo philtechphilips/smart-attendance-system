@@ -6,11 +6,7 @@ import LoaderIcon from "@/components/icons/LoaderIcon";
 import DashboardLayout from "@/layouts/dasboard";
 import EmptyTable from "@/components/emptytable";
 import classNames from "classnames";
-import {
-  getDasboardAnalytics,
-  getDasboardInsights,
-  getDasboardPerf,
-} from "@/services/Dashboard";
+import { getStaffDasboard } from "@/services/Dashboard";
 import { Bar } from "react-chartjs-2";
 import {
   Chart as ChartJS,
@@ -34,31 +30,27 @@ ChartJS.register(
   Tooltip,
   Legend
 );
+
 type TimeRange = "week" | "month" | "year";
 
-interface AttendanceData {
-  labels: string[];
-  present: number[];
-  absent: number[];
+interface AttendanceDataItem {
+  label: string;
+  present: number | string;
+  absent: number | string;
 }
 
 const Dashboard = () => {
   const [insights, setInsights] = useState<any>({});
-  const [analytic, setAnalytics] = useState<any>({});
-  const [performance, setPerformance] = useState<any>({});
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [timeRange, setTimeRange] = useState<TimeRange>("month"); // Default to month view
 
   const fetchDashboard = async () => {
     setIsLoading(true);
     try {
-      const res = await getDasboardInsights();
-      const analytics = await getDasboardAnalytics();
-      const perf = await getDasboardPerf();
+      const res = await getStaffDasboard(timeRange);
       setInsights(res);
-      setAnalytics(analytics);
-      setPerformance(perf);
     } catch (error) {
-      toast.error("Unable to fetch atendance details");
+      toast.error("Unable to fetch attendance details");
     } finally {
       setIsLoading(false);
     }
@@ -66,55 +58,45 @@ const Dashboard = () => {
 
   useEffect(() => {
     fetchDashboard();
-  }, []);
+  }, [timeRange]);
 
-  const [timeRange, setTimeRange] = useState<TimeRange>("week");
+  const processAttendanceData = (): {
+    labels: string[];
+    present: number[];
+    absent: number[];
+  } => {
+    if (!insights.attendanceData || !Array.isArray(insights.attendanceData)) {
+      return { labels: [], present: [], absent: [] };
+    }
 
-  // Sample data with TypeScript typing
-  const data: Record<TimeRange, AttendanceData> = {
-    week: {
-      labels: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
-      present: [25, 30, 28, 32, 29, 20, 15],
-      absent: [5, 2, 4, 1, 3, 10, 8],
-    },
-    month: {
-      labels: ["Week 1", "Week 2", "Week 3", "Week 4"],
-      present: [120, 115, 125, 110],
-      absent: [15, 20, 12, 18],
-    },
-    year: {
-      labels: [
-        "Jan",
-        "Feb",
-        "Mar",
-        "Apr",
-        "May",
-        "Jun",
-        "Jul",
-        "Aug",
-        "Sep",
-        "Oct",
-        "Nov",
-        "Dec",
-      ],
-      present: [500, 480, 520, 510, 530, 490, 470, 500, 520, 540, 530, 550],
-      absent: [50, 45, 40, 35, 30, 40, 45, 42, 38, 35, 40, 30],
-    },
+    const labels: string[] = [];
+    const present: number[] = [];
+    const absent: number[] = [];
+
+    insights.attendanceData.forEach((item: AttendanceDataItem) => {
+      labels.push(item.label);
+      present.push(typeof item.present === "string" ? parseInt(item.present) : item.present);
+      absent.push(typeof item.absent === "string" ? parseInt(item.absent) : item.absent);
+    });
+
+    return { labels, present, absent };
   };
 
+  const { labels, present, absent } = processAttendanceData();
+
   const chartData: ChartData<"bar"> = {
-    labels: data[timeRange].labels,
+    labels,
     datasets: [
       {
         label: "Present",
-        data: data[timeRange].present,
+        data: present,
         backgroundColor: "rgba(75, 192, 192, 0.6)",
         borderColor: "rgba(75, 192, 192, 1)",
         borderWidth: 1,
       },
       {
         label: "Absent",
-        data: data[timeRange].absent,
+        data: absent,
         backgroundColor: "rgba(255, 99, 132, 0.6)",
         borderColor: "rgba(255, 99, 132, 1)",
         borderWidth: 1,
@@ -130,21 +112,18 @@ const Dashboard = () => {
       },
       title: {
         display: true,
-        text: `Attendance Data (${
-          timeRange.charAt(0).toUpperCase() + timeRange.slice(1)
-        })`,
+        text: `Attendance Data (${timeRange.charAt(0).toUpperCase() + timeRange.slice(1)})`,
       },
     },
     scales: {
       x: {
         title: {
           display: true,
-          text:
-            timeRange === "week"
-              ? "Days"
-              : timeRange === "month"
-              ? "Weeks"
-              : "Months",
+          text: timeRange === "week" 
+            ? "Days of Week" 
+            : timeRange === "month" 
+            ? "Days of Month" 
+            : "Months",
         },
       },
       y: {
@@ -153,6 +132,9 @@ const Dashboard = () => {
           text: "Number of Students",
         },
         beginAtZero: true,
+        ticks: {
+          stepSize: 1,
+        },
       },
     },
   };
@@ -179,7 +161,7 @@ const Dashboard = () => {
               <div>
                 <p className="text-sm text-gray-700">Total Students</p>
                 <h6 className="mt-1 text-lg font-semibold">
-                  {insights?.totalStudents}
+                  {insights?.totalStudents || 0}
                 </h6>
               </div>
             </div>
@@ -190,7 +172,7 @@ const Dashboard = () => {
               <div>
                 <p className="text-sm">Assigned Classes</p>
                 <h6 className="mt-1 text-lg font-semibold">
-                  {insights?.totalLecturers}
+                  {insights?.courseCount || 0}
                 </h6>
               </div>
             </div>
@@ -201,7 +183,7 @@ const Dashboard = () => {
               <div>
                 <p className="text-sm text-gray-700">Courses</p>
                 <h6 className="mt-1 text-lg font-semibold">
-                  {insights?.totalStudents}
+                  {insights?.courseCount || 0}
                 </h6>
               </div>
             </div>
@@ -212,14 +194,14 @@ const Dashboard = () => {
               <div>
                 <p className="text-sm">Total Attendance</p>
                 <h6 className="mt-1 text-lg font-semibold">
-                  {insights?.totalLecturers}
+                  {insights?.totalAttendanceRecords || 0}
                 </h6>
               </div>
             </div>
           </section>
 
           <section className="flex md:flex-row flex-wrap md:flex-nowrap mb-8 items-start md:gap-5 gap-4 mt-10">
-            <div className="md:w-2/3 w-full bg-white rounded-lg p-5 flex items-center gap-4">
+            <div className="md:w-2/3 w-full bg-white rounded-lg p-5">
               <div style={{ width: "100%", margin: "0 auto" }}>
                 <h2 className="mb-4 text-xl font-semibold">
                   Attendance Overview
@@ -244,13 +226,19 @@ const Dashboard = () => {
                     Year
                   </button>
                 </div>
-                <Bar data={chartData} options={options} />
+                {labels.length > 0 ? (
+                  <Bar data={chartData} options={options} />
+                ) : (
+                  <div className="flex items-center justify-center h-64">
+                    <p>No attendance data available</p>
+                  </div>
+                )}
               </div>
             </div>
 
             <div className="md:w-1/3 w-full bg-white rounded-lg p-5">
               <div className="flex items-center justify-between w-full">
-                <h6 className="font-semibold text-lg  text-gray-700">
+                <h6 className="font-semibold text-lg text-gray-700">
                   Recent Activity
                 </h6>
                 <Link
@@ -261,95 +249,93 @@ const Dashboard = () => {
                 </Link>
               </div>
 
-             <div className="flex flex-col gap-4 mt-4">
-             <div className="flex mt-5">
-                <div className="w-12 h-12 rounded-full bg-gray-100 flex items-center justify-center">
-                  <img src="" alt="" />
+              <div className="flex flex-col gap-4 mt-4">
+                <div className="flex mt-5">
+                  <div className="w-12 h-12 rounded-full bg-gray-100 flex items-center justify-center">
+                    <img src="" alt="" />
+                  </div>
+                  <div className="ml-4">
+                    <p className="text-lg text-gray-800 font-semibold">Desmont Eliot</p>
+                    <p className="text-sm text-gray-500">Role: Lecturer</p>
+                    <p className="text-sm text-gray-700">Modified Year Two Timetable</p>
+                    <p className="text-sm text-gray-500">5 hours ago</p>
+                  </div>
                 </div>
-                <div className="ml-4">
-                  <p className="text-lg text-gray-800 font-semibold">Desmont Eliot</p>
-                  <p className="text-sm text-gray-500">Role: Lecturer</p>
-                  <p className="text-sm text-gray-700">Modified Year Two Timetable</p>
-                  <p className="text-sm text-gray-500">5 hours ago</p>
-                </div>
-              </div>
 
-              <div className="flex mt-5">
-                <div className="w-12 h-12 rounded-full bg-gray-100 flex items-center justify-center">
-                  <img src="" alt="" />
+                <div className="flex mt-5">
+                  <div className="w-12 h-12 rounded-full bg-gray-100 flex items-center justify-center">
+                    <img src="" alt="" />
+                  </div>
+                  <div className="ml-4">
+                    <p className="text-lg text-gray-800 font-semibold">Desmont Eliot</p>
+                    <p className="text-sm text-gray-500">Role: Lecturer</p>
+                    <p className="text-sm text-gray-700">Modified Year Two Timetable</p>
+                    <p className="text-sm text-gray-500">5 hours ago</p>
+                  </div>
                 </div>
-                <div className="ml-4">
-                  <p className="text-lg text-gray-800 font-semibold">Desmont Eliot</p>
-                  <p className="text-sm text-gray-500">Role: Lecturer</p>
-                  <p className="text-sm text-gray-700">Modified Year Two Timetable</p>
-                  <p className="text-sm text-gray-500">5 hours ago</p>
-                </div>
-              </div>
 
-              <div className="flex mt-5">
-                <div className="w-12 h-12 rounded-full bg-gray-100 flex items-center justify-center">
-                  <img src="" alt="" />
+                <div className="flex mt-5">
+                  <div className="w-12 h-12 rounded-full bg-gray-100 flex items-center justify-center">
+                    <img src="" alt="" />
+                  </div>
+                  <div className="ml-4">
+                    <p className="text-lg text-gray-800 font-semibold">Desmont Eliot</p>
+                    <p className="text-sm text-gray-500">Role: Lecturer</p>
+                    <p className="text-sm text-gray-700">Modified Year Two Timetable</p>
+                    <p className="text-sm text-gray-500">5 hours ago</p>
+                  </div>
                 </div>
-                <div className="ml-4">
-                  <p className="text-lg text-gray-800 font-semibold">Desmont Eliot</p>
-                  <p className="text-sm text-gray-500">Role: Lecturer</p>
-                  <p className="text-sm text-gray-700">Modified Year Two Timetable</p>
-                  <p className="text-sm text-gray-500">5 hours ago</p>
-                </div>
-              </div>
 
-              <div className="flex mt-5">
-                <div className="w-12 h-12 rounded-full bg-gray-100 flex items-center justify-center">
-                  <img src="" alt="" />
-                </div>
-                <div className="ml-4">
-                  <p className="text-lg text-gray-800 font-semibold">Desmont Eliot</p>
-                  <p className="text-sm text-gray-500">Role: Lecturer</p>
-                  <p className="text-sm text-gray-700">Modified Year Two Timetable</p>
-                  <p className="text-sm text-gray-500">5 hours ago</p>
-                </div>
-              </div>
-
-              <div className="flex mt-5">
-                <div className="w-12 h-12 rounded-full bg-gray-100 flex items-center justify-center">
-                  <img src="" alt="" />
-                </div>
-                <div className="ml-4">
-                  <p className="text-lg text-gray-800 font-semibold">Desmont Eliot</p>
-                  <p className="text-sm text-gray-500">Role: Lecturer</p>
-                  <p className="text-sm text-gray-700">Modified Year Two Timetable</p>
-                  <p className="text-sm text-gray-500">5 hours ago</p>
+                <div className="flex mt-5">
+                  <div className="w-12 h-12 rounded-full bg-gray-100 flex items-center justify-center">
+                    <img src="" alt="" />
+                  </div>
+                  <div className="ml-4">
+                    <p className="text-lg text-gray-800 font-semibold">Desmont Eliot</p>
+                    <p className="text-sm text-gray-500">Role: Lecturer</p>
+                    <p className="text-sm text-gray-700">Modified Year Two Timetable</p>
+                    <p className="text-sm text-gray-500">5 hours ago</p>
+                  </div>
                 </div>
               </div>
-             </div>
             </div>
           </section>
 
           <section className="flex md:flex-row flex-col gap-4 items-start">
             <div className="w-full md:w-full h-fit table__container table__container_full text-sm leading-4 pb-[4rem]">
               <h6 className="py-2 font-semibold text-gray-700 text-xl mb-2">Students</h6>
-              {analytic?.topLowAttendanceStudents?.length > 0 && (
-                <table className="w-full text-sm leading-6 bg-white border-collapse ">
+              {insights?.studentList?.length > 0 ? (
+                <table className="w-full text-sm leading-6 bg-white border-collapse">
                   <thead className="sticky top-0 bg-white z-[2]">
                     <tr className="text-left">
                       <th className="px-4 py-3 text-center leading-6 text-[#4D4D4D]">
                         S/N
                       </th>
-                      <th className="py-3 text-center ">Matric No.</th>
                       <th>
-                        <div className="flex items-center gap-2">
+                        <div className="flex items-left gap-2">
+                          <span className="text-center">Name</span>
+                        </div>
+                      </th>
+                      <th className="py-3 text-left">Matric No.</th>
+                      <th>
+                        <div className="flex items-left gap-2">
                           <span className="text-center">Department</span>
                         </div>
                       </th>
                       <th>
-                        <div className="flex items-center gap-2">
-                          <span className="">No. of Class Attended This Week</span>
+                        <div className="flex items-left gap-2">
+                          <span className="text-center">Level</span>
+                        </div>
+                      </th>
+                      <th>
+                        <div className="flex items-left gap-2">
+                          <span className="text-center">Phone No.</span>
                         </div>
                       </th>
                     </tr>
                   </thead>
                   <tbody>
-                    {analytic?.topLowAttendanceStudents?.map(
+                    {insights.studentList.map(
                       (item: any, index: number) => (
                         <tr
                           key={index}
@@ -358,42 +344,34 @@ const Dashboard = () => {
                           <td className="py-3 pr-4 text-center relative">
                             <p>{index + 1}</p>
                           </td>
-                          <td className="py-3 text-center ">
-                            {item?.student_matricNo}
+                          <td className="py-3 text-left">
+                            {item?.firstname + ' ' + item?.lastname} 
                           </td>
-                          <td className="py-3 text-center ">
-                            {item?.department_name}
+                          <td className="py-3 text-left">
+                            {item?.matricNo}
                           </td>
-                          <td className="py-3 text-center">
-                            {item?.attendanceCount}
+                          <td className="py-3 text-left">
+                            {item?.department?.name}
+                          </td>
+                          <td className="py-3 text-left">
+                            {item?.level?.name}
+                          </td>
+                          <td className="py-3 text-left">
+                            {item?.phone}
                           </td>
                         </tr>
                       )
                     )}
                   </tbody>
                 </table>
-              )}
-              {analytic?.topLowAttendanceStudents?.length <= 0 && (
-                <EmptyTable title="No studets with low attendance records" />
-              )}
-
-              {isLoading && (
-                <div
-                  className={classNames(
-                    "flex flex-col items-center justify-center w-full",
-                    {
-                      "h-full": analytic?.topLowAttendanceStudents?.length <= 0,
-                    }
-                  )}
-                >
-                  <LoaderIcon />
-                </div>
+              ) : (
+                <EmptyTable title="No students" />
               )}
             </div>
           </section>
         </div>
       ) : (
-        <div className=" flex w-full min-h-screen items-center justify-center">
+        <div className="flex w-full min-h-screen items-center justify-center">
           <LoaderIcon />
         </div>
       )}
@@ -402,4 +380,3 @@ const Dashboard = () => {
 };
 
 export default Dashboard;
-
