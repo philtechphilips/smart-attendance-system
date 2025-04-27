@@ -218,6 +218,7 @@ const LiveFeedModal = ({ course, onClose, onCapture }: LiveFeedModalProps) => {
     };
   }, [modelsLoaded]);
 
+
   useEffect(() => {
     if (!modelsLoaded || !videoRef.current || !canvasRef.current) return;
 

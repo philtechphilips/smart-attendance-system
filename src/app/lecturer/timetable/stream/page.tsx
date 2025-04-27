@@ -1,76 +1,127 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
-import io from "socket.io-client";
-
-const socket = io(process.env.NEXT_PUBLIC_BE_URL); // Replace with your backend URL
+import io, { Socket } from "socket.io-client";
 
 export default function StreamingPage() {
   const videoRef = useRef<HTMLVideoElement>(null);
-  const [peerConnection, setPeerConnection] =
-    useState<RTCPeerConnection | null>(null);
-  const [roomId, setRoomId] = useState<string>(
-    "83ca9237-1448-4a00-a983-4fc5645ed6fa",
-  ); // Room ID to join
+  const [peerConnection, setPeerConnection] = useState<RTCPeerConnection | null>(null);
+  const [roomId, setRoomId] = useState<string>("83ca9237-1448-4a00-a983-4fc5645ed6fa");
+  const [socket, setSocket] = useState<Socket | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const pc = new RTCPeerConnection();
+    // Initialize socket connection
+    const newSocket = io("http://localhost:8000", {
+      reconnectionAttempts: 5,
+      reconnectionDelay: 1000,
+      transports: ["websocket"],
+    });
+
+    newSocket.on("connect", () => {
+      setError(null);
+      console.log("Connected to socket server");
+    });
+
+    newSocket.on("connect_error", (err) => {
+      setError(`Connection error: ${err.message}`);
+      console.error("Socket connection error:", err);
+    });
+
+    setSocket(newSocket);
+
+    return () => {
+      newSocket.disconnect();
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!socket) return;
+
+    const pc = new RTCPeerConnection({
+      iceServers: [
+        { urls: "stun:stun.l.google.com:19302" },
+        // Add your TURN servers if needed
+      ],
+    });
     setPeerConnection(pc);
 
-    // Handle incoming remote stream
     pc.ontrack = (event) => {
-      if (videoRef.current) {
+      if (videoRef.current && event.streams.length > 0) {
         videoRef.current.srcObject = event.streams[0];
       }
     };
 
-    // Handle incoming ICE candidates
-    socket.on("ice-candidate", async ({ candidate }) => {
-      if (candidate) {
-        await pc.addIceCandidate(new RTCIceCandidate(candidate));
+    pc.onicecandidate = (event) => {
+      if (event.candidate && roomId) {
+        socket.emit("ice-candidate", { candidate: event.candidate, room: roomId });
       }
-    });
+    };
 
-    // Handle incoming offer
-    socket.on("offer", async ({ offer, sender }) => {
-      await pc.setRemoteDescription(new RTCSessionDescription(offer));
-      const answer = await pc.createAnswer();
-      await pc.setLocalDescription(answer);
-      socket.emit("answer", { answer, sender });
-    });
+    const handleOffer = async ({ offer, sender }: { offer: any; sender: string }) => {
+      try {
+        await pc.setRemoteDescription(new RTCSessionDescription(offer));
+        const answer = await pc.createAnswer();
+        await pc.setLocalDescription(answer);
+        socket.emit("answer", { answer, sender, room: roomId });
+      } catch (err) {
+        console.error("Error handling offer:", err);
+      }
+    };
 
-    // Handle request to resend the stream
-    socket.on("request-stream", async ({ requester }) => {
-      if (peerConnection) {
-        const offer = await peerConnection.createOffer();
-        await peerConnection.setLocalDescription(offer);
+    const handleIceCandidate = async ({ candidate }: { candidate: any }) => {
+      try {
+        if (candidate) {
+          await pc.addIceCandidate(new RTCIceCandidate(candidate));
+        }
+      } catch (err) {
+        console.error("Error adding ICE candidate:", err);
+      }
+    };
+
+    const handleRequestStream = async ({ requester }: { requester: string }) => {
+      try {
+        const offer = await pc.createOffer();
+        await pc.setLocalDescription(offer);
         socket.emit("offer", { offer, room: roomId, sender: socket.id });
+      } catch (err) {
+        console.error("Error handling stream request:", err);
       }
-    });
+    };
 
-    // Join the room
+    socket.on("offer", handleOffer);
+    socket.on("ice-candidate", handleIceCandidate);
+    socket.on("request-stream", handleRequestStream);
+
     if (roomId) {
       socket.emit("join-room", roomId);
     }
 
     return () => {
       pc.close();
-      socket.off("ice-candidate");
-      socket.off("offer");
-      socket.off("request-stream");
+      socket.off("offer", handleOffer);
+      socket.off("ice-candidate", handleIceCandidate);
+      socket.off("request-stream", handleRequestStream);
     };
-  }, [roomId]);
+  }, [socket, roomId]);
 
   const handleJoinRoom = () => {
     if (!roomId) {
-      alert("Please enter a room ID to join.");
+      setError("Please enter a room ID to join.");
       return;
     }
-    socket.emit("join-room", roomId);
+    if (socket) {
+      socket.emit("join-room", roomId);
+    }
   };
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
       <h1 className="text-2xl font-bold mb-4">Live Streaming</h1>
+      {error && (
+        <div className="mb-4 p-2 bg-red-100 text-red-700 rounded">
+          {error}
+        </div>
+      )}
       <div className="mb-4">
         <input
           type="text"
