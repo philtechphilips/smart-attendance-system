@@ -16,9 +16,9 @@ import io from "socket.io-client"; // Import Socket.IO client
 
 const socket = io(process.env.NEXT_PUBLIC_BE_URL); // Replace with your backend URL
 
-export default function AttendanceModule() {
+export default function TimetableModule() {
   return (
-    <DashboardLayout pageTitle="Attendances">
+    <DashboardLayout pageTitle="Timetables">
       <Timetable />
     </DashboardLayout>
   );
@@ -300,7 +300,7 @@ const LiveFeedModal = ({ course, onClose, onCapture }: LiveFeedModalProps) => {
 
                 if (response.data.success) {
                   toast.success(
-                    `Attendance captured for student ${matchedStudent.matricNo}`,
+                    `Timetable captured for student ${matchedStudent.matricNo}`,
                   );
                 } else {
                   toast.warning(
@@ -390,14 +390,14 @@ const LiveFeedModal = ({ course, onClose, onCapture }: LiveFeedModalProps) => {
             };
 
             const response = await makeNetworkCall({
-              url: "/attendances/capture",
+              url: "/Timetables/capture",
               method: "POST",
               body: payload,
             });
 
             if (response.data.success) {
               toast.success(
-                `Attendance captured for student ${matchedStudent.matricNo}`,
+                `Timetable captured for student ${matchedStudent.matricNo}`,
               );
             } else {
               throw new Error(response.message || "Capture failed");
@@ -491,7 +491,7 @@ const LiveFeedModal = ({ course, onClose, onCapture }: LiveFeedModalProps) => {
             {isLoading
               ? "Processing..."
               : faceCaptured
-                ? "Captured Attendance"
+                ? "Captured Timetable"
                 : "No Face Detected"}
           </BaseButton>
         </div>
@@ -508,7 +508,7 @@ const Timetable = ({}: any) => {
     setActiveEvent(index);
   };
   const dispatch = useAppDispatch();
-  const [allAttendances, setAllAttendances] = useState<any>({});
+  const [allTimetables, setAllTimetables] = useState<any>({});
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
   const user = useAppSelector((state: RootState) => state.auth.user);
@@ -541,7 +541,7 @@ const Timetable = ({}: any) => {
       };
 
       const response = await makeNetworkCall({
-        url: "/attendances/capture",
+        url: "/Timetables/capture",
         method: "POST",
         body: payload,
       });
@@ -549,8 +549,8 @@ const Timetable = ({}: any) => {
       if (response.data.success) {
         toast.success(
           studentId
-            ? `Attendance captured for student ${studentId}`
-            : "Attendance captured successfully!",
+            ? `Timetable captured for student ${studentId}`
+            : "Timetable captured successfully!",
         );
         closeLiveModal();
       } else {
@@ -558,17 +558,17 @@ const Timetable = ({}: any) => {
       }
     } catch (err: any) {
       console.error("Capture failed:", err);
-      toast.error(err.message || "Failed to capture attendance");
+      toast.error(err.message || "Failed to capture Timetable");
       throw err;
     }
   };
 
-  const fetchAttendance = async () => {
+  const fetchTimetable = async () => {
     setIsLoading(true);
     if (user) {
       try {
         const res = await getLecturerCourses(user?.id);
-        setAllAttendances(res);
+        setAllTimetables(res);
       } catch (err) {
         console.error("Failed to fetch courses:", err);
         toast.error("Failed to load courses");
@@ -579,7 +579,7 @@ const Timetable = ({}: any) => {
   };
 
   useEffect(() => {
-    fetchAttendance();
+    fetchTimetable();
   }, []);
 
   return (
@@ -594,7 +594,7 @@ const Timetable = ({}: any) => {
               } py-4 cursor-pointer`}
               onClick={() => handleActiveEvent(0)}
             >
-              Attendance
+              Timetable
             </span>
           </div>
         </div>
@@ -603,12 +603,12 @@ const Timetable = ({}: any) => {
           <div className="relative event__list__container">
             <div className="flex justify-between items-center p-4">
               <div className="font-semibold text-sm leading-10">
-                Attendance list ({allAttendances?.course?.length || 0})
+                Timetable list ({allTimetables?.course?.length || 0})
               </div>
             </div>
 
             <div className="w-full h-[20rem] overflow-auto text-sm leading-4 pb-[4rem]">
-              {allAttendances && allAttendances?.course?.length > 0 && (
+              {allTimetables && allTimetables?.course?.length > 0 && (
                 <div className="overflow-x-auto">
                   <table className="w-full text-xs bg-white border-collapse px-5">
                     <thead className="sticky top-0 bg-white z-[2]">
@@ -625,7 +625,7 @@ const Timetable = ({}: any) => {
                       </tr>
                     </thead>
                     <tbody>
-                      {allAttendances?.course?.map(
+                      {allTimetables?.course?.map(
                         (item: any, index: number) => (
                           <tr
                             key={index}
@@ -656,7 +656,7 @@ const Timetable = ({}: any) => {
                   </table>
                 </div>
               )}
-              {allAttendances?.course?.length <= 0 && !isLoading && (
+              {allTimetables?.course?.length <= 0 && !isLoading && (
                 <EmptyTable title="No Courses Found" />
               )}
 

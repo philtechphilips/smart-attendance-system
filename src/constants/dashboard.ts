@@ -19,7 +19,7 @@ export const LECTURER_SIDEBAR = [
   },
   {
     title: "Attendance",
-    url: "/lecturer/attendance",
+    url: "/dashboard/attendance",
     icon: "ri-task-line",
   },
   {

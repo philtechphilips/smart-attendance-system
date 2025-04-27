@@ -44,7 +44,19 @@ const AttendanceDetails = () => {
           <section className="flex md:flex-row flex-col items-start gap-10 mt-10">
             <div className="bg-white rounded-lg md:w-2/5 p-5">
               <div className="flex items-start gap-3">
-                <div className="min-w-10 min-h-10 bg-gray-800 rounded-full"></div>
+                <div className="w-16 h-16 flex items-center justify-center rounded-full">
+                 <div className="w-full h-full">
+                 {attendanceDetails?.student?.image && (
+                      <img
+                      className="w-full h-full rounded-full"
+                        src={`data:image/jpeg;base64,${Buffer.from(
+                          attendanceDetails?.student?.image
+                        ).toString("base64")}`}
+                        alt="Attendance"
+                      /> 
+                    )}
+                 </div>
+                </div>
                 <div>
                   <h2 className="font-semibold">
                     {attendanceDetails?.student?.firstname +
@@ -90,7 +102,7 @@ const AttendanceDetails = () => {
                       <p className="text-sm">
                         {attendanceDetails?.timestamp
                           ? new Date(
-                              attendanceDetails.timestamp,
+                              attendanceDetails.timestamp
                             ).toLocaleTimeString("en-US", {
                               hour: "numeric",
                               minute: "numeric",
@@ -123,7 +135,16 @@ const AttendanceDetails = () => {
                 </div>
               </div>
             </div>
-            <div className="bg-white rounded-lg md:w-3/5 p-5"></div>
+            <div className="bg-white rounded-lg md:w-3/5 p-5">
+              {attendanceDetails?.image && (
+                <img
+                  src={`data:image/jpeg;base64,${btoa(
+                    String.fromCharCode(...attendanceDetails.image.data)
+                  )}`}
+                  alt="Attendance"
+                />
+              )}
+            </div>
           </section>
         </div>
       ) : (
@@ -136,3 +157,4 @@ const AttendanceDetails = () => {
 };
 
 export default AttendanceDetails;
+
