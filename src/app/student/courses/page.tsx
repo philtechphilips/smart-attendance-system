@@ -6,7 +6,7 @@ import classNames from "classnames";
 import DashboardLayout from "@/layouts/dasboard";
 import { useAppDispatch } from "@/reducer/store";
 import EmptyTable from "@/components/emptytable";
-import { getLecturerCourses, getStudentCourses } from "@/services/courses.service";
+import { getStudentCourses } from "@/services/courses.service";
 import Link from "next/link";
 
 export default function CourseList() {
@@ -42,7 +42,6 @@ const Courses = () => {
     const res = await getStudentCourses({
       search: "",
     });
-    console.log("res", res);
     setCourses((prevcourses: any) => {
       const existingIds = new Set(prevcourses.map((course: any) => course.id));
       const newcourses = res.items.filter(
@@ -64,7 +63,7 @@ const Courses = () => {
           Course list ({courses?.length || 0})
         </div>
         <div className="flex gap-4 items-center">
-          <div className="relative">
+          {/* <div className="relative">
             <input
               type="text"
               placeholder="Search course..."
@@ -77,16 +76,16 @@ const Courses = () => {
                   return;
                 }
                 setIsLoading(true);
-                const res = await getLecturerCourses({
+                const res = await getStudentCourses({
                   search: query,
                 });
-                setCourses(res?.course);
+                setCourses(res?.items);
                 setAllcourses(res);
                 setIsLoading(false);
               }}
             />
             <i className="ri-search-line absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500"></i>
-          </div>
+          </div> */}
         </div>
       </div>
       <main>
