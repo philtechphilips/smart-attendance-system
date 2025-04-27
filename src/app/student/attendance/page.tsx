@@ -27,7 +27,7 @@ export default function AttendanceModule() {
 // Image compression utility
 const compressImage = async (
   file: File,
-  maxSizeKB: number = 200,
+  maxSizeKB: number = 200
 ): Promise<string> => {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
@@ -143,7 +143,7 @@ const DashboardContent = ({}: any) => {
 
     if (!base64Image || !user) {
       setError(
-        base64Image ? "User not authenticated" : "Please select a file first",
+        base64Image ? "User not authenticated" : "Please select a file first"
       );
       return;
     }
@@ -205,6 +205,7 @@ const DashboardContent = ({}: any) => {
     setIsLoading(true);
     if (user) {
       const res = await getStudentAttendances(user?.id);
+      console.log(res, "student attendance");
       setAllAttendances(res);
       setIsLoading(false);
     }
@@ -243,8 +244,7 @@ const DashboardContent = ({}: any) => {
           <div className="relative event__list__container">
             <div className="flex justify-between items-center p-4">
               <div className="font-semibold text-sm leading-10">
-                Attendance list ({allAttendances?.courseAttendanceTable?.length}
-                )
+                Attendance list ({allAttendances?.attendances?.length})
               </div>
               <button
                 onClick={openModal}
@@ -258,62 +258,73 @@ const DashboardContent = ({}: any) => {
               className="w-full h-[20rem] overflow-auto text-sm leading-4 pb-[4rem]"
               onScroll={handleScroll}
             >
-              {allAttendances &&
-                allAttendances?.courseAttendanceTable?.length > 0 && (
-                  <div className="overflow-x-auto">
-                    <table className="w-full text-xs bg-white border-collapse px-5">
-                      <thead className="sticky top-0 bg-white z-[2]">
-                        <tr className="text-left">
-                          <th className="text-center py-3 leading-6 text-[#4D4D4D]">
-                            S/N
-                          </th>
-                          <th className="py-3 hidden md:table-cell">Course</th>
-                          <th className="py-3 hidden lg:table-cell">
-                            Course Code
-                          </th>
-                          <th className="py-3 hidden lg:table-cell">Mode</th>
-                          <th className="py-3 hidden lg:table-cell">
-                            Lecturer
-                          </th>
-                          <th className="py-3">Status</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {allAttendances &&
-                          allAttendances?.courseAttendanceTable?.length > 0 &&
-                          allAttendances?.courseAttendanceTable?.map(
-                            (item: any, index: number) => (
-                              <tr
-                                key={index}
-                                className="border-t-2 border-[#e6e6e6] text-[#4D4D4D] w-full hover:bg-[#737373] hover:bg-opacity-10 cursor-pointer"
-                              >
-                                <td className="py-3 text-center">
-                                  {index + 1}
-                                </td>
-                                <td className="py-3 hidden md:table-cell">
-                                  {item?.course?.name}
-                                </td>
-                                <td className="py-3 hidden lg:table-cell">
-                                  {item?.course?.code}
-                                </td>
-                                <td className="py-3 hidden lg:table-cell">
-                                  Face Recognition
-                                </td>
-                                <td className="py-3 hidden xl:table-cell">
-                                  {item?.course?.lecturer?.firstname +
-                                    " " +
-                                    item?.course?.lecturer?.lastname}
-                                </td>
-                                <td className="py-3 hidden xl:table-cell bg-green-600 rounded-lg px-5 text-white w-24">
-                                  {item?.present === 1 ? "Present" : "Absent"}
-                                </td>
-                              </tr>
-                            ),
-                          )}
-                      </tbody>
-                    </table>
-                  </div>
-                )}
+              {allAttendances && allAttendances?.attendances?.length > 0 && (
+                <div className="overflow-x-auto">
+                  <table className="w-full text-xs bg-white border-collapse px-5">
+                    <thead className="sticky top-0 bg-white z-[2]">
+                      <tr className="text-left">
+                        <th className="text-center py-3 leading-6 text-[#4D4D4D]">
+                          S/N
+                        </th>
+                        <th className="py-3 hidden md:table-cell">Course</th>
+                        <th className="py-3 hidden lg:table-cell">
+                          Course Code
+                        </th>
+                        <th className="py-3 hidden lg:table-cell">Mode</th>
+                        <th className="py-3 hidden lg:table-cell">Lecturer</th>
+                        <th className="py-3">Date</th>
+                        <th className="py-3">Status</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {allAttendances &&
+                        allAttendances?.attendances?.length > 0 &&
+                        allAttendances?.attendances?.map(
+                          (item: any, index: number) => (
+                            <tr
+                              key={index}
+                              className="border-t-2 border-[#e6e6e6] text-[#4D4D4D] w-full hover:bg-[#737373] hover:bg-opacity-10 cursor-pointer"
+                            >
+                              <td className="py-3 text-center">{index + 1}</td>
+                              <td className="py-3 hidden md:table-cell">
+                                {item?.course?.name}
+                              </td>
+                              <td className="py-3 hidden lg:table-cell">
+                                {item?.course?.code}
+                              </td>
+                              <td className="py-3 hidden lg:table-cell">
+                                Face Recognition
+                              </td>
+                              <td className="py-3 hidden xl:table-cell">
+                                {item?.course?.lecturer?.firstname +
+                                  " " +
+                                  item?.course?.lecturer?.lastname}
+                              </td>
+                              <td className="py-3 hidden lg:table-cell">
+                                {new Date(item?.timestamp).toLocaleString(
+                                  "en-US",
+                                  {
+                                    year: "numeric",
+                                    month: "short",
+                                    day: "numeric",
+                                    hour: "2-digit",
+                                    minute: "2-digit",
+                                    second: "2-digit",
+                                  }
+                                )}
+                              </td>
+                              <td className="py-3 hidden xl:table-cell bg-green-600 rounded-lg px-5 text-white w-24">
+                                {item?.status === "present"
+                                  ? "Present"
+                                  : "Absent"}
+                              </td>
+                            </tr>
+                          )
+                        )}
+                    </tbody>
+                  </table>
+                </div>
+              )}
               {allAttendances?.courseAttendanceTable?.length <= 0 && (
                 <EmptyTable title="No Attendance Record" />
               )}
@@ -325,7 +336,7 @@ const DashboardContent = ({}: any) => {
                     {
                       "h-full":
                         allAttendances?.courseAttendanceTable?.length <= 0,
-                    },
+                    }
                   )}
                 >
                   <LoaderIcon />
@@ -400,3 +411,4 @@ const DashboardContent = ({}: any) => {
     </div>
   );
 };
+

@@ -13,6 +13,18 @@ export const getDasboardInsights = async () => {
   }
 };
 
+export const getStudentDashboard = async () => {
+  try {
+    const response = await makeNetworkCall({
+      url: "/dashboard/student-dashboard",
+    });
+    return response.data;
+  } catch (err) {
+    const message = errorMessage(err);
+    throw new Error(message ?? "Network error");
+  }
+}
+
 export const getDasboardAnalytics = async () => {
   try {
     const response = await makeNetworkCall({

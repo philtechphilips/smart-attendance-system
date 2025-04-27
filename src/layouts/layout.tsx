@@ -13,12 +13,19 @@ export default function AuthLayout({ children, pageTitle }: AuthLayoutProps) {
   const router = useRouter();
 
   const { user: userData, isLoggedIn } = useAppSelector(
-    (state: RootState) => state.auth,
+    (state: RootState) => state.auth
   );
 
   useEffect(() => {
     if (isLoggedIn && userData) {
-      router.push("/dashboard/home");
+      const userRole = userData?.role;
+      if (userRole === "STUDENT") {
+        router.push("/student/dashboard");
+      } else if (userRole === "LECTURER") {
+        router.push("/lecturer/dashboard");
+      } else if (userRole === "ADMIN") {
+        router.push("/dashboard/home");
+      }
     }
   }, [userData, isLoggedIn]);
 
@@ -30,3 +37,4 @@ export default function AuthLayout({ children, pageTitle }: AuthLayoutProps) {
     </main>
   );
 }
+

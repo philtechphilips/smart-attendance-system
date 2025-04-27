@@ -59,6 +59,20 @@ export const getLecturerCourses = async (search: any) => {
   }
 };
 
+export const getStudentCourses = async (search: any) => {
+  try {
+    const response = await makeNetworkCall({
+      url: `/courses/student-courses?search=${search?.search ?? ""}`,
+      method: "GET",
+    });
+
+    return response.data;
+  } catch (err) {
+    const message = errorMessage(err);
+    throw new Error(message ?? "Network error");
+  }
+};
+
 export const getCourseAttendance = async (
   id: any,
   startDate: string,
@@ -69,6 +83,26 @@ export const getCourseAttendance = async (
   try {
     const response = await makeNetworkCall({
       url: `/courses/course-attendance/${id}?startDate=${startDate}&endDate=${endDate}&search=${search ?? ""}&download=${download}`,
+      method: "GET",
+    });
+
+    return response.data;
+  } catch (err) {
+    const message = errorMessage(err);
+    throw new Error(message ?? "Network error");
+  }
+};
+
+export const getStudentCourseAttendance = async (
+  id: any,
+  startDate: string,
+  endDate: string,
+  search: any,
+  download: boolean,
+) => {
+  try {
+    const response = await makeNetworkCall({
+      url: `/courses/student-course-attendance/${id}?startDate=${startDate}&endDate=${endDate}&search=${search ?? ""}&download=${download}`,
       method: "GET",
     });
 

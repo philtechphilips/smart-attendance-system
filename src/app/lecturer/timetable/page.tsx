@@ -145,14 +145,28 @@ const LiveFeedModal = ({ course, onClose, onCapture }: LiveFeedModalProps) => {
           videoRef.current.srcObject = mediaStream;
           setStream(mediaStream);
 
-          // Initialize WebRTC PeerConnection
-          const pc = new RTCPeerConnection();
-          setPeerConnection(pc);
+          // Initialize WebRTC PeerConnection with proper configuration
+          const pc = new RTCPeerConnection({
+            iceServers: [
+              { urls: "stun:stun.l.google.com:19302" },
+            ],
+          });
+
+          // Add connection state handlers
+          pc.oniceconnectionstatechange = () => {
+            console.log("ICE connection state:", pc.iceConnectionState);
+          };
+
+          pc.onsignalingstatechange = () => {
+            console.log("Signaling state:", pc.signalingState);
+          };
+
+          pc.onconnectionstatechange = () => {
+            console.log("Connection state:", pc.connectionState);
+          };
 
           // Add local stream to PeerConnection
-          mediaStream
-            .getTracks()
-            .forEach((track) => pc.addTrack(track, mediaStream));
+          mediaStream.getTracks().forEach((track) => pc.addTrack(track, mediaStream));
 
           // Handle ICE candidates
           pc.onicecandidate = (event) => {
@@ -164,36 +178,61 @@ const LiveFeedModal = ({ course, onClose, onCapture }: LiveFeedModalProps) => {
             }
           };
 
-          // Handle remote stream (if needed)
-          pc.ontrack = (event) => {
-            console.log("Remote stream received:", event.streams[0]);
-          };
+          setPeerConnection(pc);
 
           // Join the signaling room
           socket.emit("join-room", course.id);
 
-          // Handle incoming offer
+          // Handle incoming offer with proper state checks
           socket.on("offer", async ({ offer, sender }) => {
-            await pc.setRemoteDescription(new RTCSessionDescription(offer));
-            const answer = await pc.createAnswer();
-            await pc.setLocalDescription(answer);
-            socket.emit("answer", { answer, sender });
+            try {
+              if (!pc || pc.signalingState !== "stable") {
+                console.warn(`Cannot process offer in state: ${pc?.signalingState}`);
+                return;
+              }
+
+              await pc.setRemoteDescription(new RTCSessionDescription(offer));
+              const answer = await pc.createAnswer();
+              await pc.setLocalDescription(answer);
+              socket.emit("answer", { answer, sender });
+            } catch (err) {
+              console.error("Error handling offer:", err);
+            }
           });
 
-          // Handle incoming answer
+          // Handle incoming answer with proper state checks
           socket.on("answer", async ({ answer }) => {
-            await pc.setRemoteDescription(new RTCSessionDescription(answer));
+            try {
+              if (!pc) return;
+
+              if (pc.signalingState !== "have-local-offer") {
+                console.warn(`Cannot set remote answer in state: ${pc.signalingState}`);
+                return;
+              }
+
+              await pc.setRemoteDescription(new RTCSessionDescription(answer));
+            } catch (err) {
+              console.error("Error setting remote answer:", err);
+            }
           });
 
           // Handle incoming ICE candidates
           socket.on("ice-candidate", async ({ candidate }) => {
-            await pc.addIceCandidate(new RTCIceCandidate(candidate));
+            try {
+              if (pc && candidate) {
+                await pc.addIceCandidate(new RTCIceCandidate(candidate));
+              }
+            } catch (err) {
+              console.error("Error adding ICE candidate:", err);
+            }
           });
 
-          // Create and send an offer
+          // Create and send an offer with slight delay
           const offer = await pc.createOffer();
           await pc.setLocalDescription(offer);
-          socket.emit("offer", { offer, room: course.id });
+          setTimeout(() => {
+            socket.emit("offer", { offer, room: course.id });
+          }, 300);
         }
       } catch (err) {
         console.error("Camera/WebRTC error:", err);
@@ -212,8 +251,18 @@ const LiveFeedModal = ({ course, onClose, onCapture }: LiveFeedModalProps) => {
         stream.getTracks().forEach((track) => track.stop());
       }
       if (peerConnection) {
+        // Clean up all event listeners
+        peerConnection.onicecandidate = null;
+        peerConnection.ontrack = null;
+        peerConnection.oniceconnectionstatechange = null;
+        peerConnection.onsignalingstatechange = null;
+        peerConnection.onconnectionstatechange = null;
         peerConnection.close();
       }
+      // Remove socket listeners
+      socket.off("offer");
+      socket.off("answer");
+      socket.off("ice-candidate");
       isMounted = false;
     };
   }, [modelsLoaded]);

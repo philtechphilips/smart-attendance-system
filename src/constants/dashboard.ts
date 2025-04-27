@@ -5,6 +5,11 @@ export const STUDENT_SIDEBAR = [
     icon: "ri-dashboard-horizontal-line",
   },
   {
+    title: "Courses",
+    url: "/student/courses",
+    icon: "ri-graduation-cap-line",
+  },
+  {
     title: "Attendance",
     url: "/student/attendance",
     icon: "ri-task-line",

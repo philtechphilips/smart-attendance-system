@@ -239,7 +239,7 @@ const Dashboard = () => {
                   <div className="flex items-center justify-center h-64">
                     <p>No attendance data available</p>
                   </div>
-                )}
+                )} 
               </div>
             </div>
 
