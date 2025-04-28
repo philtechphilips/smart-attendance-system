@@ -77,10 +77,10 @@ const AttendanceList = () => {
     });
     setAttendance((prevAttendances: any) => {
       const existingIds = new Set(
-        prevAttendances.map((attendance: any) => attendance.id),
+        prevAttendances.map((attendance: any) => attendance.id)
       );
       const newAttendances = res.items.filter(
-        (item: any) => !existingIds.has(item.id),
+        (item: any) => !existingIds.has(item.id)
       );
       return [...prevAttendances, ...newAttendances];
     });
@@ -121,7 +121,7 @@ const AttendanceList = () => {
                 <i className="ri-arrow-drop-down-line" aria-hidden="true"></i>
               </button>
               {showStatus && (
-                <div className="absolute right-96 w-48 mt-2 top-12 z-[10000] bg-white border border-gray-300 divide-y divide-gray-100 rounded-md shadow-lg focus:outline-none">
+                <div className="absolute right-[600px] w-48 mt-2 top-12 z-[10000] bg-white border border-gray-300 divide-y divide-gray-100 rounded-md shadow-lg focus:outline-none">
                   {statusOptions.map((option) => (
                     <button
                       key={option.value}
@@ -152,7 +152,7 @@ const AttendanceList = () => {
                 <i className="ri-arrow-drop-down-line" aria-hidden="true"></i>
               </button>
               {showLevel && (
-                <div className="absolute right-48 w-48 mt-2 top-12 z-[10000] bg-white border border-gray-300 divide-y divide-gray-100 rounded-md shadow-lg focus:outline-none">
+                <div className="absolute right-92 w-48 mt-2 top-12 z-[10000] bg-white border border-gray-300 divide-y divide-gray-100 rounded-md shadow-lg focus:outline-none">
                   {levelOptions.map((option) => (
                     <button
                       key={option.value}
@@ -186,7 +186,7 @@ const AttendanceList = () => {
                 <i className="ri-arrow-drop-down-line" aria-hidden="true"></i>
               </button>
               {showPeriod && (
-                <div className="absolute right-4 w-48 mt-2 top-12 z-[10000] bg-white border border-gray-300 divide-y divide-gray-100 rounded-md shadow-lg focus:outline-none">
+                <div className="absolute right-64 w-48 mt-2 top-12 z-[10000] bg-white border border-gray-300 divide-y divide-gray-100 rounded-md shadow-lg focus:outline-none">
                   {periodOptions.map((option) => (
                     <button
                       key={option.value}
@@ -203,6 +203,35 @@ const AttendanceList = () => {
                 </div>
               )}
             </div>
+          </div>
+
+          <div className="relative">
+            <input
+              type="text"
+              placeholder="Search attendance..."
+              className="border border-[#E6E6E6] rounded-md px-4 py-2 text-sm w-64 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              onChange={async (e) => {
+                const query = e.target.value;
+                if (query.trim() === "") {
+                  setPaginationValue(1);
+                  fetchAttendance();
+                  return;
+                }
+                setIsLoading(true);
+                const res = await getDepartmentAttendances({
+                  currentPage: paginationValue,
+                  pageSize: 10,
+                  status: selectedStatus,
+                  level: selectedLevel !== "all" ? selectedLevel : undefined,
+                  period: selectedPeriod ? selectedPeriod : undefined,
+                  search: query,
+                });
+                setAttendance(res?.items);
+                setAllAttendances(res?.items);
+                setIsLoading(false);
+              }}
+            />
+            <i className="ri-search-line absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500"></i>
           </div>
         </div>
       </div>
@@ -304,7 +333,7 @@ const AttendanceList = () => {
               "flex flex-col items-center justify-center w-full",
               {
                 "h-full": allAttendances?.items?.length <= 0,
-              },
+              }
             )}
           >
             <LoaderIcon />
@@ -316,3 +345,4 @@ const AttendanceList = () => {
 };
 
 export default AttendanceList;
+

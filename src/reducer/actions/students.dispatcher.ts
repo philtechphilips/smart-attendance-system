@@ -14,6 +14,7 @@ export interface AttendanceListParams {
   status?: string;
   level?: string;
   period?: string;
+  search?: string;
 }
 
 export const getStudentsByDepartment = createAsyncThunk(

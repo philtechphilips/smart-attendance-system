@@ -5,7 +5,7 @@ import { AttendanceListParams } from "@/reducer/actions/students.dispatcher";
 export const getDepartmentAttendances = async (
   params: Partial<AttendanceListParams>,
 ) => {
-  const { currentPage, pageSize, status, level, period } = params;
+  const { currentPage, pageSize, status, level, period, search } = params;
   let queryString = `currentPage=${currentPage}&pageSize=${pageSize}`;
 
   if (status) {
@@ -18,6 +18,10 @@ export const getDepartmentAttendances = async (
 
   if (period) {
     queryString = `${queryString}&period=${period}`;
+  }
+
+  if (search) {
+    queryString = `${queryString}&search=${search}`;
   }
 
   try {
