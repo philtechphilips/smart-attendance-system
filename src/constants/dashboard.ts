@@ -65,4 +65,9 @@ export const ADMIN_SIDEBAR = [
     url: "/dashboard/attendance",
     icon: "ri-survey-line",
   },
+  {
+    title: "Stream",
+    url: "/lecturer/timetable/stream",
+    icon: "ri-video-ai-line",
+  },
 ];

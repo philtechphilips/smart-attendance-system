@@ -660,18 +660,18 @@ const Timetable = ({}: any) => {
             <div className="w-full h-[20rem] overflow-auto text-sm leading-4 pb-[4rem]">
               {allTimetables && allTimetables?.course?.length > 0 && (
                 <div className="overflow-x-auto">
-                  <table className="w-full text-xs bg-white border-collapse px-5">
+                  <table className="w-full text-xs bg-white border-collapse px-5 min-w-[600px]">
                     <thead className="sticky top-0 bg-white z-[2]">
                       <tr className="text-left">
                         <th className="text-center py-3 leading-6 text-[#4D4D4D]">
                           S/N
                         </th>
-                        <th className="py-3 hidden md:table-cell">Course</th>
-                        <th className="py-3 hidden lg:table-cell">
+                        <th className="py-3">Course</th>
+                        <th className="py-3">
                           Course Code
                         </th>
-                        <th className="py-3 hidden lg:table-cell">Class</th>
-                        <th className="py-3 hidden lg:table-cell">Action</th>
+                        <th className="py-3l">Class</th>
+                        <th className="py-3">Action</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -682,16 +682,16 @@ const Timetable = ({}: any) => {
                             className="border-t-2 border-[#e6e6e6] text-[#4D4D4D] w-full hover:bg-[#737373] hover:bg-opacity-10 cursor-pointer"
                           >
                             <td className="py-3 text-center">{index + 1}</td>
-                            <td className="py-3 hidden md:table-cell">
+                            <td className="py-3">
                               {item?.name}
                             </td>
-                            <td className="py-3 hidden lg:table-cell">
+                            <td className="py-3">
                               {item?.code}
                             </td>
-                            <td className="py-3 hidden lg:table-cell">
+                            <td className="py-3">
                               {item?.class?.name}
                             </td>
-                            <td className="py-3 hidden xl:table-cell">
+                            <td className="py-3">
                               <button
                                 onClick={() => startClass(item)}
                                 className="bg-green-600 rounded-lg px-5 py-2 text-white w-24 hover:bg-green-700"

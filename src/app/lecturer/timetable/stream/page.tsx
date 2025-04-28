@@ -11,7 +11,7 @@ export default function StreamingPage() {
 
   useEffect(() => {
     // Initialize socket connection
-    const newSocket = io("http://localhost:8000", {
+    const newSocket = io(process.env.NEXT_PUBLIC_BE_URL, {
       reconnectionAttempts: 5,
       reconnectionDelay: 1000,
       transports: ["websocket"],
