@@ -2,7 +2,7 @@ import React, { ReactNode } from "react";
 import LoaderIcon from "../icons/LoaderIcon";
 
 interface ButtonProp {
-  text: string | JSX.Element;
+  text: any;
   type: string;
   styles?: string;
   position: string;
