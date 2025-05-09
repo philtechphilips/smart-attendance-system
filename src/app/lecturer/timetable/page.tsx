@@ -147,9 +147,7 @@ const LiveFeedModal = ({ course, onClose, onCapture }: LiveFeedModalProps) => {
 
           // Initialize WebRTC PeerConnection with proper configuration
           const pc = new RTCPeerConnection({
-            iceServers: [
-              { urls: "stun:stun.l.google.com:19302" },
-            ],
+            iceServers: [{ urls: "stun:stun.l.google.com:19302" }],
           });
 
           // Add connection state handlers
@@ -166,7 +164,9 @@ const LiveFeedModal = ({ course, onClose, onCapture }: LiveFeedModalProps) => {
           };
 
           // Add local stream to PeerConnection
-          mediaStream.getTracks().forEach((track) => pc.addTrack(track, mediaStream));
+          mediaStream
+            .getTracks()
+            .forEach((track) => pc.addTrack(track, mediaStream));
 
           // Handle ICE candidates
           pc.onicecandidate = (event) => {
@@ -187,7 +187,9 @@ const LiveFeedModal = ({ course, onClose, onCapture }: LiveFeedModalProps) => {
           socket.on("offer", async ({ offer, sender }) => {
             try {
               if (!pc || pc.signalingState !== "stable") {
-                console.warn(`Cannot process offer in state: ${pc?.signalingState}`);
+                console.warn(
+                  `Cannot process offer in state: ${pc?.signalingState}`,
+                );
                 return;
               }
 
@@ -206,7 +208,9 @@ const LiveFeedModal = ({ course, onClose, onCapture }: LiveFeedModalProps) => {
               if (!pc) return;
 
               if (pc.signalingState !== "have-local-offer") {
-                console.warn(`Cannot set remote answer in state: ${pc.signalingState}`);
+                console.warn(
+                  `Cannot set remote answer in state: ${pc.signalingState}`,
+                );
                 return;
               }
 
@@ -266,7 +270,6 @@ const LiveFeedModal = ({ course, onClose, onCapture }: LiveFeedModalProps) => {
       isMounted = false;
     };
   }, [modelsLoaded]);
-
 
   useEffect(() => {
     if (!modelsLoaded || !videoRef.current || !canvasRef.current) return;
@@ -667,9 +670,7 @@ const Timetable = ({}: any) => {
                           S/N
                         </th>
                         <th className="py-3">Course</th>
-                        <th className="py-3">
-                          Course Code
-                        </th>
+                        <th className="py-3">Course Code</th>
                         <th className="py-3l">Class</th>
                         <th className="py-3">Action</th>
                       </tr>
@@ -682,15 +683,9 @@ const Timetable = ({}: any) => {
                             className="border-t-2 border-[#e6e6e6] text-[#4D4D4D] w-full hover:bg-[#737373] hover:bg-opacity-10 cursor-pointer"
                           >
                             <td className="py-3 text-center">{index + 1}</td>
-                            <td className="py-3">
-                              {item?.name}
-                            </td>
-                            <td className="py-3">
-                              {item?.code}
-                            </td>
-                            <td className="py-3">
-                              {item?.class?.name}
-                            </td>
+                            <td className="py-3">{item?.name}</td>
+                            <td className="py-3">{item?.code}</td>
+                            <td className="py-3">{item?.class?.name}</td>
                             <td className="py-3">
                               <button
                                 onClick={() => startClass(item)}

@@ -15,12 +15,10 @@ export default function useResetPasswordForm() {
   //     new_password: "",
   //     confirmPassword: "",
   //   },
-
   //   validationSchema: yup.object().shape({
   //     new_password: yup.string().required("This field is required"),
   //     confirmPassword: yup.string().required("This field is required"),
   //   }),
-
   //   async onSubmit(formData) {
   //     try {
   //       if (formData.confirmPassword !== formData.new_password) {
@@ -44,7 +42,6 @@ export default function useResetPasswordForm() {
   //     }
   //   },
   // });
-
   // return {
   //   ...form,
   //   isLoading,

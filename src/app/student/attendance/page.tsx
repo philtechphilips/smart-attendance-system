@@ -27,7 +27,7 @@ export default function AttendanceModule() {
 // Image compression utility
 const compressImage = async (
   file: File,
-  maxSizeKB: number = 200
+  maxSizeKB: number = 200,
 ): Promise<string> => {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
@@ -143,7 +143,7 @@ const DashboardContent = ({}: any) => {
 
     if (!base64Image || !user) {
       setError(
-        base64Image ? "User not authenticated" : "Please select a file first"
+        base64Image ? "User not authenticated" : "Please select a file first",
       );
       return;
     }
@@ -310,7 +310,7 @@ const DashboardContent = ({}: any) => {
                                     hour: "2-digit",
                                     minute: "2-digit",
                                     second: "2-digit",
-                                  }
+                                  },
                                 )}
                               </td>
                               <td className="py-3 hidden xl:table-cell bg-green-600 rounded-lg px-5 text-white w-24">
@@ -319,7 +319,7 @@ const DashboardContent = ({}: any) => {
                                   : "Absent"}
                               </td>
                             </tr>
-                          )
+                          ),
                         )}
                     </tbody>
                   </table>
@@ -336,7 +336,7 @@ const DashboardContent = ({}: any) => {
                     {
                       "h-full":
                         allAttendances?.courseAttendanceTable?.length <= 0,
-                    }
+                    },
                   )}
                 >
                   <LoaderIcon />
@@ -411,4 +411,3 @@ const DashboardContent = ({}: any) => {
     </div>
   );
 };
-

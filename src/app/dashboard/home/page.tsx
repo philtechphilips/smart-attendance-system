@@ -239,65 +239,65 @@ const Dashboard = () => {
                   <div className="flex items-center justify-center h-64">
                     <p>No attendance data available</p>
                   </div>
-                )} 
+                )}
               </div>
             </div>
 
             <div className="md:w-1/3 w-full bg-white rounded-lg p-5">
-            <div className="w-full md:w-full h-fit table__container table__container_full text-sm leading-4 pb-[4rem]">
-              <h6 className="py-2 font-semibold text-gray-700 text-xl mb-2">
-                Courses
-              </h6>
-              {insights?.courses?.length > 0 ? (
-                <table className="w-full text-sm leading-6 bg-white border-collapse">
-                  <thead className="sticky top-0 bg-white z-[2]">
-                    <tr className="text-left">
-                      <th className="px-4 py-3 text-center leading-6 text-[#4D4D4D]">
-                        S/N
-                      </th>
-                      <th>
-                        <div className="flex items-left gap-2">
-                          <span className="text-center">Name</span>
-                        </div>
-                      </th>
-                      <th className="py-3 text-left">Code</th>
-                      <th>
-                        <div className="flex items-left gap-2">
-                          <span className="text-center">Class</span>
-                        </div>
-                      </th>
-                      <th>
-                        <div className="flex items-left gap-2">
-                          <span className="text-center">Department</span>
-                        </div>
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {insights.courses.map((item: any, index: number) => (
-                      <tr
-                        key={index}
-                        className="border-t-2 border-[#e6e6e6] text-[#4D4D4D] w-full hover:bg-[#737373] hover:bg-opacity-10 cursor-pointer"
-                      >
-                        <td className="py-3 pr-4 text-center relative">
-                          <p>{index + 1}</p>
-                        </td>
-                        <td className="py-3 text-left">
-                          {item?.name}
-                        </td>
-                        <td className="py-3 text-left">{item?.code}</td>
-                        <td className="py-3 text-left">
-                          {item?.class?.name}
-                        </td>
-                        <td className="py-3 text-left">{item?.department?.name}</td>
+              <div className="w-full md:w-full h-fit table__container table__container_full text-sm leading-4 pb-[4rem]">
+                <h6 className="py-2 font-semibold text-gray-700 text-xl mb-2">
+                  Courses
+                </h6>
+                {insights?.courses?.length > 0 ? (
+                  <table className="w-full text-sm leading-6 bg-white border-collapse">
+                    <thead className="sticky top-0 bg-white z-[2]">
+                      <tr className="text-left">
+                        <th className="px-4 py-3 text-center leading-6 text-[#4D4D4D]">
+                          S/N
+                        </th>
+                        <th>
+                          <div className="flex items-left gap-2">
+                            <span className="text-center">Name</span>
+                          </div>
+                        </th>
+                        <th className="py-3 text-left">Code</th>
+                        <th>
+                          <div className="flex items-left gap-2">
+                            <span className="text-center">Class</span>
+                          </div>
+                        </th>
+                        <th>
+                          <div className="flex items-left gap-2">
+                            <span className="text-center">Department</span>
+                          </div>
+                        </th>
                       </tr>
-                    ))}
-                  </tbody>
-                </table>
-              ) : (
-                <EmptyTable title="No course" />
-              )}
-            </div>
+                    </thead>
+                    <tbody>
+                      {insights.courses.map((item: any, index: number) => (
+                        <tr
+                          key={index}
+                          className="border-t-2 border-[#e6e6e6] text-[#4D4D4D] w-full hover:bg-[#737373] hover:bg-opacity-10 cursor-pointer"
+                        >
+                          <td className="py-3 pr-4 text-center relative">
+                            <p>{index + 1}</p>
+                          </td>
+                          <td className="py-3 text-left">{item?.name}</td>
+                          <td className="py-3 text-left">{item?.code}</td>
+                          <td className="py-3 text-left">
+                            {item?.class?.name}
+                          </td>
+                          <td className="py-3 text-left">
+                            {item?.department?.name}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                ) : (
+                  <EmptyTable title="No course" />
+                )}
+              </div>
             </div>
           </section>
 

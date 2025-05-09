@@ -195,12 +195,12 @@ export default function SignUpForm() {
           </Form>
         )}
       </Formik>
-         <LinkButton href={"/auth/sign-in"}>
-                    <p className={styles.new_user}>
-                      Already have an account?{" "}
-                      <span style={{ color: "#4253f0" }}>Sign In</span>
-                    </p>
-                  </LinkButton>
+      <LinkButton href={"/auth/sign-in"}>
+        <p className={styles.new_user}>
+          Already have an account?{" "}
+          <span style={{ color: "#4253f0" }}>Sign In</span>
+        </p>
+      </LinkButton>
     </div>
   );
 }

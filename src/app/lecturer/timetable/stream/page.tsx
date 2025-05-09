@@ -4,8 +4,11 @@ import io, { Socket } from "socket.io-client";
 
 export default function StreamingPage() {
   const videoRef = useRef<HTMLVideoElement>(null);
-  const [peerConnection, setPeerConnection] = useState<RTCPeerConnection | null>(null);
-  const [roomId, setRoomId] = useState<string>("83ca9237-1448-4a00-a983-4fc5645ed6fa");
+  const [peerConnection, setPeerConnection] =
+    useState<RTCPeerConnection | null>(null);
+  const [roomId, setRoomId] = useState<string>(
+    "83ca9237-1448-4a00-a983-4fc5645ed6fa",
+  );
   const [socket, setSocket] = useState<Socket | null>(null);
   const [error, setError] = useState<string | null>(null);
 
@@ -53,11 +56,20 @@ export default function StreamingPage() {
 
     pc.onicecandidate = (event) => {
       if (event.candidate && roomId) {
-        socket.emit("ice-candidate", { candidate: event.candidate, room: roomId });
+        socket.emit("ice-candidate", {
+          candidate: event.candidate,
+          room: roomId,
+        });
       }
     };
 
-    const handleOffer = async ({ offer, sender }: { offer: any; sender: string }) => {
+    const handleOffer = async ({
+      offer,
+      sender,
+    }: {
+      offer: any;
+      sender: string;
+    }) => {
       try {
         await pc.setRemoteDescription(new RTCSessionDescription(offer));
         const answer = await pc.createAnswer();
@@ -78,7 +90,11 @@ export default function StreamingPage() {
       }
     };
 
-    const handleRequestStream = async ({ requester }: { requester: string }) => {
+    const handleRequestStream = async ({
+      requester,
+    }: {
+      requester: string;
+    }) => {
       try {
         const offer = await pc.createOffer();
         await pc.setLocalDescription(offer);
@@ -118,9 +134,7 @@ export default function StreamingPage() {
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
       <h1 className="text-2xl font-bold mb-4">Live Streaming</h1>
       {error && (
-        <div className="mb-4 p-2 bg-red-100 text-red-700 rounded">
-          {error}
-        </div>
+        <div className="mb-4 p-2 bg-red-100 text-red-700 rounded">{error}</div>
       )}
       <div className="mb-4">
         <input

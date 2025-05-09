@@ -11,13 +11,11 @@ export default function useForgotPasswordForm() {
   //   initialFormData: {
   //     email: "",
   //   },
-
   //   validationSchema: object({
   //     email: string()
   //       .required("This field is required")
   //       .email("Please provide a valid email"),
   //   }),
-
   //   async onSubmit(formData) {
   //     setIsLoading(true);
   //     const { data, error } = await ForgotPassword(formData);
@@ -37,6 +35,5 @@ export default function useForgotPasswordForm() {
   //     }
   //   },
   // });
-
   // return { ...form, isLoading };
 }

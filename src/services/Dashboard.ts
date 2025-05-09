@@ -23,7 +23,7 @@ export const getStudentDashboard = async () => {
     const message = errorMessage(err);
     throw new Error(message ?? "Network error");
   }
-}
+};
 
 export const getDasboardAnalytics = async () => {
   try {

@@ -60,7 +60,7 @@ const CoursesAttendance = () => {
     setCourses((prevcourses: any) => {
       const existingIds = new Set(prevcourses.map((course: any) => course.id));
       const newcourses = res.attendance.filter(
-        (item: any) => !existingIds.has(item.id)
+        (item: any) => !existingIds.has(item.id),
       );
       return [...prevcourses, ...newcourses];
     });
@@ -82,7 +82,7 @@ const CoursesAttendance = () => {
       startDate.toISOString(),
       endDate.toISOString(),
       "",
-      false
+      false,
     );
     setCourses(res?.attendance);
     setAllcourses(res);
@@ -115,7 +115,7 @@ const CoursesAttendance = () => {
                   "",
                   "",
                   query,
-                  false
+                  false,
                 );
                 setCourses(res?.attendance);
                 setAllcourses(res);
@@ -233,7 +233,7 @@ const CoursesAttendance = () => {
                 "flex flex-col items-center justify-center w-full",
                 {
                   "h-full": allcourses?.items?.length <= 0,
-                }
+                },
               )}
             >
               <LoaderIcon />
@@ -273,4 +273,3 @@ const CoursesAttendance = () => {
     </div>
   );
 };
-

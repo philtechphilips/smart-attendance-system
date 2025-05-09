@@ -45,17 +45,17 @@ const AttendanceDetails = () => {
             <div className="bg-white rounded-lg md:w-2/5 p-5">
               <div className="flex items-start gap-3">
                 <div className="w-16 h-16 flex items-center justify-center rounded-full">
-                 <div className="w-full h-full">
-                 {attendanceDetails?.student?.image && (
+                  <div className="w-full h-full">
+                    {attendanceDetails?.student?.image && (
                       <img
-                      className="w-full h-full rounded-full"
+                        className="w-full h-full rounded-full"
                         src={`data:image/jpeg;base64,${Buffer.from(
-                          attendanceDetails?.student?.image
+                          attendanceDetails?.student?.image,
                         ).toString("base64")}`}
                         alt="Attendance"
-                      /> 
+                      />
                     )}
-                 </div>
+                  </div>
                 </div>
                 <div>
                   <h2 className="font-semibold">
@@ -102,7 +102,7 @@ const AttendanceDetails = () => {
                       <p className="text-sm">
                         {attendanceDetails?.timestamp
                           ? new Date(
-                              attendanceDetails.timestamp
+                              attendanceDetails.timestamp,
                             ).toLocaleTimeString("en-US", {
                               hour: "numeric",
                               minute: "numeric",
@@ -139,7 +139,7 @@ const AttendanceDetails = () => {
               {attendanceDetails?.image && (
                 <img
                   src={`data:image/jpeg;base64,${btoa(
-                    String.fromCharCode(...attendanceDetails.image.data)
+                    String.fromCharCode(...attendanceDetails.image.data),
                   )}`}
                   alt="Attendance"
                 />
@@ -157,4 +157,3 @@ const AttendanceDetails = () => {
 };
 
 export default AttendanceDetails;
-

@@ -239,13 +239,11 @@ const Dashboard = () => {
                   <div className="flex items-center justify-center h-64">
                     <p>No attendance data available</p>
                   </div>
-                )} 
+                )}
               </div>
             </div>
 
-            <div className="md:w-1/3 w-full bg-white rounded-lg p-5">
-      
-            </div>
+            <div className="md:w-1/3 w-full bg-white rounded-lg p-5"></div>
           </section>
 
           <section className="flex md:flex-row flex-col gap-4 items-start">

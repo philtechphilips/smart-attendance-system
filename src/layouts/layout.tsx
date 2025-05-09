@@ -13,7 +13,7 @@ export default function AuthLayout({ children, pageTitle }: AuthLayoutProps) {
   const router = useRouter();
 
   const { user: userData, isLoggedIn } = useAppSelector(
-    (state: RootState) => state.auth
+    (state: RootState) => state.auth,
   );
 
   useEffect(() => {
@@ -37,4 +37,3 @@ export default function AuthLayout({ children, pageTitle }: AuthLayoutProps) {
     </main>
   );
 }
-

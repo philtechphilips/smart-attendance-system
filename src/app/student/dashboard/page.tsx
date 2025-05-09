@@ -31,7 +31,7 @@ ChartJS.register(
   BarElement,
   Title,
   Tooltip,
-  Legend
+  Legend,
 );
 
 const StudentDashboard = () => {
@@ -60,13 +60,13 @@ const StudentDashboard = () => {
   // Prepare chart data for students with critical issues
   const studentsCriticalData = {
     labels: performance?.studentsWithCriticalIssues?.map(
-      (item: any) => item?.student_matricNo
+      (item: any) => item?.student_matricNo,
     ),
     datasets: [
       {
         label: "Average Attendance",
         data: performance?.studentsWithCriticalIssues?.map(
-          (item: any) => item?.averageAttendance
+          (item: any) => item?.averageAttendance,
         ),
         backgroundColor: "rgba(255, 99, 132, 0.5)",
         borderColor: "rgba(255, 99, 132, 1)",
@@ -78,13 +78,13 @@ const StudentDashboard = () => {
   // Top Performing Departments Data
   const topDepartmentsData = {
     labels: performance?.topPerformingDepartments?.map(
-      (item: any) => item?.department_name
+      (item: any) => item?.department_name,
     ),
     datasets: [
       {
         label: "Average Attendance",
         data: performance?.topPerformingDepartments?.map(
-          (item: any) => item?.count
+          (item: any) => item?.count,
         ),
         backgroundColor: "rgba(54, 162, 235, 0.5)",
         borderColor: "rgba(54, 162, 235, 1)",
@@ -173,4 +173,3 @@ const StudentDashboard = () => {
 };
 
 export default StudentDashboard;
-

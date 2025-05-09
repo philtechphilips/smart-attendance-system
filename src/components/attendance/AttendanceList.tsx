@@ -77,10 +77,10 @@ const AttendanceList = () => {
     });
     setAttendance((prevAttendances: any) => {
       const existingIds = new Set(
-        prevAttendances.map((attendance: any) => attendance.id)
+        prevAttendances.map((attendance: any) => attendance.id),
       );
       const newAttendances = res.items.filter(
-        (item: any) => !existingIds.has(item.id)
+        (item: any) => !existingIds.has(item.id),
       );
       return [...prevAttendances, ...newAttendances];
     });
@@ -333,7 +333,7 @@ const AttendanceList = () => {
               "flex flex-col items-center justify-center w-full",
               {
                 "h-full": allAttendances?.items?.length <= 0,
-              }
+              },
             )}
           >
             <LoaderIcon />
@@ -345,4 +345,3 @@ const AttendanceList = () => {
 };
 
 export default AttendanceList;
-
