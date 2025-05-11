@@ -9,4 +9,12 @@ const emitWebSocketEvent = (
   socket.emit(eventName, eventData);
 };
 
+export const emitJoinBroadcast = (socket: Socket, roomId: string) => {
+  socket.emit("joinBroadcast", { roomId });
+};
+
+export const emitBroadcastStarted = (socket: Socket, roomId: string) => {
+  socket.emit("broadcastStarted", { roomId });
+};
+
 export default emitWebSocketEvent;

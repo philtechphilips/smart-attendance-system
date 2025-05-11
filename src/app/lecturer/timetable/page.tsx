@@ -10,11 +10,14 @@ import { toast } from "react-toastify";
 import BaseButton from "@/components/buttons/base-button/BaseButton";
 import { getLecturerCourses } from "@/services/courses.service";
 import EmptyTable from "@/components/emptytable";
-import { STUDENTS } from "@/constants/students";
 import { getDepartmentStudents } from "@/services/Students.service";
-import io from "socket.io-client"; // Import Socket.IO client
+import { io, Socket } from "socket.io-client";
 
-const socket = io(process.env.NEXT_PUBLIC_BE_URL); // Replace with your backend URL
+type RoomCreatedMessage = string;
+type NewViewerMessage = string;
+type OfferMessage = { sender: string; offer: RTCSessionDescriptionInit };
+type AnswerMessage = { sender: string; answer: RTCSessionDescriptionInit };
+type IceCandidateMessage = { sender: string; candidate: RTCIceCandidate };
 
 export default function TimetableModule() {
   return (
@@ -43,8 +46,13 @@ const LiveFeedModal = ({ course, onClose, onCapture }: LiveFeedModalProps) => {
     useState<any>(null);
   const [studentDescriptors, setStudentDescriptors] = useState<any[]>([]);
   const [studentsList, setStudentsList] = useState<any>([]);
-  const [peerConnection, setPeerConnection] =
-    useState<RTCPeerConnection | null>(null);
+  const socketRef = useRef<Socket | null>(null);
+  const streamRef = useRef<MediaStream | null>(null);
+  const peerConnectionsRef = useRef<Record<string, RTCPeerConnection>>({});
+  const [isStreaming, setIsStreaming] = useState(false);
+  const [roomId, setRoomId] = useState("");
+  const [viewers, setViewers] = useState<string[]>([]);
+  const detectionIntervalRef = useRef<NodeJS.Timeout | null>(null);
 
   const fetchDepartmentStudents = async () => {
     setIsLoading(true);
@@ -52,7 +60,6 @@ const LiveFeedModal = ({ course, onClose, onCapture }: LiveFeedModalProps) => {
       const res = await getDepartmentStudents();
       setStudentsList(res?.items);
     } catch (err) {
-      console.error("Failed to fetch courses:", err);
       toast.error("Failed to load courses");
     } finally {
       setIsLoading(false);
@@ -64,11 +71,8 @@ const LiveFeedModal = ({ course, onClose, onCapture }: LiveFeedModalProps) => {
   }, []);
 
   useEffect(() => {
-    let isMounted = true;
-
     const loadModelsAndImages = async () => {
       try {
-        // Load face detection models
         const MODEL_URL = "/models";
         await Promise.all([
           faceapi.nets.tinyFaceDetector.loadFromUri(MODEL_URL),
@@ -77,24 +81,36 @@ const LiveFeedModal = ({ course, onClose, onCapture }: LiveFeedModalProps) => {
           faceapi.nets.ssdMobilenetv1.loadFromUri(MODEL_URL),
         ]);
 
-        // Process all student images
         const processedStudents = await Promise.all(
-          STUDENTS.map(async (student) => {
-            if (!student.image) return null;
+          studentsList.map(async (student: any) => {
+            if (!student.image) {
+              return null;
+            }
 
             try {
-              const img = await faceapi.fetchImage(student.image);
-              const detections = await faceapi
-                .detectAllFaces(img, new faceapi.TinyFaceDetectorOptions())
-                .withFaceLandmarks()
-                .withFaceDescriptors();
+              if (
+                student.image &&
+                student.image.type === "Buffer" &&
+                Array.isArray(student.image.data)
+              ) {
+                const base64Image = `data:image/jpeg;base64,${Buffer.from(student.image.data).toString("base64")}`;
+                const img = await faceapi.fetchImage(base64Image);
+                const detections = await faceapi
+                  .detectAllFaces(img, new faceapi.TinyFaceDetectorOptions())
+                  .withFaceLandmarks()
+                  .withFaceDescriptors();
 
-              if (detections.length > 0) {
-                return {
-                  studentId: student.id,
-                  matricNo: student.matricNo,
-                  descriptor: detections[0].descriptor,
-                };
+                if (detections.length > 0) {
+                  return {
+                    studentId: student.id,
+                    matricNo: student.matricNo,
+                    descriptor: detections[0].descriptor,
+                  };
+                } else {
+                  console.warn(`No face detected for student ${student.id}`);
+                }
+              } else {
+                console.warn(`Invalid image format for student ${student.id}`);
               }
               return null;
             } catch (err) {
@@ -107,176 +123,165 @@ const LiveFeedModal = ({ course, onClose, onCapture }: LiveFeedModalProps) => {
           }),
         );
 
-        if (isMounted) {
-          setModelsLoaded(true);
-          setLoadingModels(false);
-          setStudentDescriptors(processedStudents.filter(Boolean));
+        console.log("Processed student descriptors:", processedStudents);
+
+        // Filter out null values and ensure we have descriptors
+        const validDescriptors = processedStudents.filter(Boolean);
+        if (validDescriptors.length === 0) {
+          console.warn("No valid student descriptors found");
         }
+
+        setModelsLoaded(true);
+        setLoadingModels(false);
+        setStudentDescriptors(validDescriptors);
       } catch (err) {
-        console.error("Failed to load models or process images:", err);
-        if (isMounted) {
-          setError(
-            "Failed to load face detection models or student images. Please refresh the page.",
-          );
-          setLoadingModels(false);
-        }
+        setError(
+          "Failed to load face detection models or student images. Please refresh the page.",
+        );
+        setLoadingModels(false);
       }
     };
 
     loadModelsAndImages();
 
     return () => {
-      isMounted = false;
+      if (detectionIntervalRef.current) {
+        clearInterval(detectionIntervalRef.current);
+      }
     };
-  }, []);
+  }, [studentsList]);
 
   useEffect(() => {
-    let isMounted = true;
+    if (!modelsLoaded) return;
 
-    const startCameraAndWebRTC = async () => {
-      if (!modelsLoaded) return;
-
+    const startVideoStream = async () => {
       try {
         const mediaStream = await navigator.mediaDevices.getUserMedia({
-          video: { facingMode: "user" },
+          video: true,
+          audio: true,
         });
 
-        if (isMounted && videoRef.current) {
+        if (videoRef.current) {
           videoRef.current.srcObject = mediaStream;
           setStream(mediaStream);
-
-          // Initialize WebRTC PeerConnection with proper configuration
-          const pc = new RTCPeerConnection({
-            iceServers: [{ urls: "stun:stun.l.google.com:19302" }],
-          });
-
-          // Add connection state handlers
-          pc.oniceconnectionstatechange = () => {
-            console.log("ICE connection state:", pc.iceConnectionState);
-          };
-
-          pc.onsignalingstatechange = () => {
-            console.log("Signaling state:", pc.signalingState);
-          };
-
-          pc.onconnectionstatechange = () => {
-            console.log("Connection state:", pc.connectionState);
-          };
-
-          // Add local stream to PeerConnection
-          mediaStream
-            .getTracks()
-            .forEach((track) => pc.addTrack(track, mediaStream));
-
-          // Handle ICE candidates
-          pc.onicecandidate = (event) => {
-            if (event.candidate) {
-              socket.emit("ice-candidate", {
-                candidate: event.candidate,
-                room: course.id,
-              });
-            }
-          };
-
-          setPeerConnection(pc);
-
-          // Join the signaling room
-          socket.emit("join-room", course.id);
-
-          // Handle incoming offer with proper state checks
-          socket.on("offer", async ({ offer, sender }) => {
-            try {
-              if (!pc || pc.signalingState !== "stable") {
-                console.warn(
-                  `Cannot process offer in state: ${pc?.signalingState}`,
-                );
-                return;
-              }
-
-              await pc.setRemoteDescription(new RTCSessionDescription(offer));
-              const answer = await pc.createAnswer();
-              await pc.setLocalDescription(answer);
-              socket.emit("answer", { answer, sender });
-            } catch (err) {
-              console.error("Error handling offer:", err);
-            }
-          });
-
-          // Handle incoming answer with proper state checks
-          socket.on("answer", async ({ answer }) => {
-            try {
-              if (!pc) return;
-
-              if (pc.signalingState !== "have-local-offer") {
-                console.warn(
-                  `Cannot set remote answer in state: ${pc.signalingState}`,
-                );
-                return;
-              }
-
-              await pc.setRemoteDescription(new RTCSessionDescription(answer));
-            } catch (err) {
-              console.error("Error setting remote answer:", err);
-            }
-          });
-
-          // Handle incoming ICE candidates
-          socket.on("ice-candidate", async ({ candidate }) => {
-            try {
-              if (pc && candidate) {
-                await pc.addIceCandidate(new RTCIceCandidate(candidate));
-              }
-            } catch (err) {
-              console.error("Error adding ICE candidate:", err);
-            }
-          });
-
-          // Create and send an offer with slight delay
-          const offer = await pc.createOffer();
-          await pc.setLocalDescription(offer);
-          setTimeout(() => {
-            socket.emit("offer", { offer, room: course.id });
-          }, 300);
+          streamRef.current = mediaStream;
         }
       } catch (err) {
-        console.error("Camera/WebRTC error:", err);
-        if (isMounted) {
-          setError("Could not access camera or initialize WebRTC.");
-        }
+        console.error("Camera access error:", err);
+        setError("Could not access camera. Please check permissions.");
       }
     };
 
-    if (modelsLoaded) {
-      startCameraAndWebRTC();
-    }
+    startVideoStream();
 
     return () => {
-      if (stream) {
-        stream.getTracks().forEach((track) => track.stop());
+      if (streamRef.current) {
+        streamRef.current.getTracks().forEach((track) => track.stop());
+        streamRef.current = null;
       }
-      if (peerConnection) {
-        // Clean up all event listeners
-        peerConnection.onicecandidate = null;
-        peerConnection.ontrack = null;
-        peerConnection.oniceconnectionstatechange = null;
-        peerConnection.onsignalingstatechange = null;
-        peerConnection.onconnectionstatechange = null;
-        peerConnection.close();
-      }
-      // Remove socket listeners
-      socket.off("offer");
-      socket.off("answer");
-      socket.off("ice-candidate");
-      isMounted = false;
     };
   }, [modelsLoaded]);
 
   useEffect(() => {
     if (!modelsLoaded || !videoRef.current || !canvasRef.current) return;
 
-    let debounceTimeout: NodeJS.Timeout | null = null;
+    const initializeWebRTC = async () => {
+      try {
+        const socket = io(process.env.NEXT_PUBLIC_BE_URL!);
+        socketRef.current = socket;
 
-    const detectFace = async () => {
+        socket.on("room-created", (roomId: RoomCreatedMessage) => {
+          setRoomId(roomId);
+          setIsStreaming(true);
+        });
+
+        socket.on("new-viewer", (viewerId: NewViewerMessage) => {
+          setViewers((prev) => [...prev, viewerId]);
+          if (streamRef.current) {
+            createPeerConnection(viewerId, streamRef.current);
+          }
+        });
+
+        socket.on("answer", handleAnswer);
+        socket.on("ice-candidate", handleIceCandidate);
+
+        socket.emit("create-room");
+      } catch (err) {
+        console.error("WebRTC initialization error:", err);
+        setError("Failed to initialize live streaming");
+      }
+    };
+
+    const createPeerConnection = (viewerId: string, stream: MediaStream) => {
+      const pc = new RTCPeerConnection({
+        iceServers: [{ urls: "stun:stun.l.google.com:19302" }],
+      });
+
+      stream.getTracks().forEach((track) => pc.addTrack(track, stream));
+
+      pc.onicecandidate = (event) => {
+        if (event.candidate && socketRef.current) {
+          socketRef.current.emit("ice-candidate", {
+            target: viewerId,
+            candidate: event.candidate,
+          });
+        }
+      };
+
+      pc.createOffer()
+        .then((offer) => pc.setLocalDescription(offer))
+        .then(() => {
+          if (pc.localDescription && socketRef.current) {
+            socketRef.current.emit("offer", {
+              target: viewerId,
+              offer: pc.localDescription,
+            });
+          }
+        });
+
+      peerConnectionsRef.current[viewerId] = pc;
+    };
+
+    const handleAnswer = ({ sender, answer }: AnswerMessage) => {
+      const pc = peerConnectionsRef.current[sender];
+      if (pc) {
+        pc.setRemoteDescription(new RTCSessionDescription(answer));
+      }
+    };
+
+    const handleIceCandidate = ({ sender, candidate }: IceCandidateMessage) => {
+      const pc = peerConnectionsRef.current[sender];
+      if (pc && candidate) {
+        pc.addIceCandidate(new RTCIceCandidate(candidate));
+      }
+    };
+
+    initializeWebRTC();
+
+    return () => {
+      Object.values(peerConnectionsRef.current).forEach((pc) => pc.close());
+      peerConnectionsRef.current = {};
+
+      if (socketRef.current) {
+        socketRef.current.off("room-created");
+        socketRef.current.off("new-viewer");
+        socketRef.current.off("answer");
+        socketRef.current.off("ice-candidate");
+        socketRef.current.disconnect();
+      }
+    };
+  }, [modelsLoaded]);
+
+  useEffect(() => {
+    if (
+      !modelsLoaded ||
+      !videoRef.current ||
+      !canvasRef.current ||
+      studentDescriptors.length === 0
+    )
+      return;
+
+    const detectFaces = async () => {
       try {
         const video = videoRef.current;
         const canvas = canvasRef.current;
@@ -292,7 +297,6 @@ const LiveFeedModal = ({ course, onClose, onCapture }: LiveFeedModalProps) => {
           height: video.videoHeight,
         };
         faceapi.matchDimensions(canvas, displaySize);
-
         const resizedDetections = faceapi.resizeResults(
           detections,
           displaySize,
@@ -302,48 +306,41 @@ const LiveFeedModal = ({ course, onClose, onCapture }: LiveFeedModalProps) => {
         if (!context) return;
 
         context.clearRect(0, 0, canvas.width, canvas.height);
-        canvas.width = displaySize.width;
-        canvas.height = displaySize.height;
-
         faceapi.draw.drawDetections(canvas, resizedDetections);
 
         if (resizedDetections.length > 0) {
           const capturedDescriptor = resizedDetections[0].descriptor;
 
-          // Compare captured face with all student descriptors
-          const faceMatcher = new faceapi.FaceMatcher(
-            studentDescriptors.map(
-              (desc) =>
-                new faceapi.LabeledFaceDescriptors(desc.matricNo, [
-                  desc.descriptor,
-                ]),
-            ),
-            0.4, // Adjust the threshold here
-          );
-
-          const bestMatch = faceMatcher.findBestMatch(capturedDescriptor);
-
-          if (bestMatch.label !== "unknown") {
-            setFaceCaptured(true);
-
-            // Find the matched student details
-            const matchedStudent = studentDescriptors.find(
-              (desc) => desc.matricNo === bestMatch.label,
+          // Only create FaceMatcher if we have descriptors
+          if (studentDescriptors.length > 0) {
+            const faceMatcher = new faceapi.FaceMatcher(
+              studentDescriptors.map(
+                (desc) =>
+                  new faceapi.LabeledFaceDescriptors(desc.matricNo, [
+                    desc.descriptor,
+                  ]),
+              ),
+              0.4,
             );
 
-            if (matchedStudent) {
-              // Clear any existing debounce timeout
-              if (debounceTimeout) clearTimeout(debounceTimeout);
+            const bestMatch = faceMatcher.findBestMatch(capturedDescriptor);
 
-              // Set a new debounce timeout
-              debounceTimeout = setTimeout(async () => {
+            if (bestMatch.label !== "unknown") {
+              setFaceCaptured(true);
+              const matchedStudent = studentDescriptors.find(
+                (desc) => desc.matricNo === bestMatch.label,
+              );
+
+              if (matchedStudent) {
                 const payload = {
                   studentId: matchedStudent.studentId,
                   matricNo: matchedStudent.matricNo,
                   image: canvas.toDataURL("image/jpeg"),
-                  courseId: course.id, // Include the course ID
+                  courseId: course.id,
                   timestamp: new Date().toISOString(),
                 };
+
+                console.log(payload, "student payload.....................");
 
                 const response = await makeNetworkCall({
                   url: "/attendances/capture",
@@ -361,23 +358,27 @@ const LiveFeedModal = ({ course, onClose, onCapture }: LiveFeedModalProps) => {
                       "Capture failed. Please try again.",
                   );
                 }
-              }, 2000); // 8 seconds debounce
+              }
+            } else {
+              setFaceCaptured(false);
             }
-          } else {
-            console.warn("No matching student found");
           }
+        } else {
+          setFaceCaptured(false);
         }
       } catch (err) {
         console.error("Face detection error:", err);
       }
     };
 
-    const interval = setInterval(detectFace, 500); // Call detectFace every 500ms
+    detectionIntervalRef.current = setInterval(detectFaces, 500);
+
     return () => {
-      clearInterval(interval);
-      if (debounceTimeout) clearTimeout(debounceTimeout);
+      if (detectionIntervalRef.current) {
+        clearInterval(detectionIntervalRef.current);
+      }
     };
-  }, [modelsLoaded, studentDescriptors]);
+  }, [modelsLoaded, studentDescriptors, course]);
 
   const captureImage = async () => {
     if (!videoRef.current || !canvasRef.current || !modelsLoaded || !course)
@@ -387,7 +388,6 @@ const LiveFeedModal = ({ course, onClose, onCapture }: LiveFeedModalProps) => {
       setIsLoading(true);
       setError(null);
 
-      // Capture current frame
       const video = videoRef.current;
       const canvas = canvasRef.current;
       const context = canvas.getContext("2d");
@@ -398,7 +398,6 @@ const LiveFeedModal = ({ course, onClose, onCapture }: LiveFeedModalProps) => {
       context.drawImage(video, 0, 0, canvas.width, canvas.height);
       const capturedImageData = canvas.toDataURL("image/jpeg");
 
-      // Detect faces in captured image
       const capturedDetections = await faceapi
         .detectAllFaces(video, new faceapi.TinyFaceDetectorOptions())
         .withFaceLandmarks()
@@ -407,57 +406,53 @@ const LiveFeedModal = ({ course, onClose, onCapture }: LiveFeedModalProps) => {
       if (capturedDetections.length > 0) {
         const capturedDescriptor = capturedDetections[0].descriptor;
 
-        if (studentDescriptors.length === 0) {
-          throw new Error("No student images available for comparison");
-        }
-
-        // Compare captured face with all student descriptors
-        const faceMatcher = new faceapi.FaceMatcher(
-          studentDescriptors.map(
-            (desc) =>
-              new faceapi.LabeledFaceDescriptors(desc.matricNo, [
-                desc.descriptor,
-              ]),
-          ),
-          0.4, // Adjust the threshold here
-        );
-
-        const bestMatch = faceMatcher.findBestMatch(capturedDescriptor);
-
-        if (bestMatch.label !== "unknown") {
-          console.log("Matched student:", bestMatch.label);
-
-          // Find the matched student details
-          const matchedStudent = studentDescriptors.find(
-            (desc) => desc.matricNo === bestMatch.label,
+        // Only proceed if we have student descriptors
+        if (studentDescriptors.length > 0) {
+          const faceMatcher = new faceapi.FaceMatcher(
+            studentDescriptors.map(
+              (desc) =>
+                new faceapi.LabeledFaceDescriptors(desc.matricNo, [
+                  desc.descriptor,
+                ]),
+            ),
+            0.4,
           );
 
-          if (matchedStudent) {
-            // Send data to the backend
-            const payload = {
-              studentId: matchedStudent.studentId,
-              matricNo: matchedStudent.matricNo,
-              image: capturedImageData,
-              courseId: course.id, // Include the course ID
-              timestamp: new Date().toISOString(),
-            };
+          const bestMatch = faceMatcher.findBestMatch(capturedDescriptor);
 
-            const response = await makeNetworkCall({
-              url: "/Timetables/capture",
-              method: "POST",
-              body: payload,
-            });
+          if (bestMatch.label !== "unknown") {
+            const matchedStudent = studentDescriptors.find(
+              (desc) => desc.matricNo === bestMatch.label,
+            );
 
-            if (response.data.success) {
-              toast.success(
-                `Timetable captured for student ${matchedStudent.matricNo}`,
-              );
-            } else {
-              throw new Error(response.message || "Capture failed");
+            if (matchedStudent) {
+              const payload = {
+                studentId: matchedStudent.studentId,
+                matricNo: matchedStudent.matricNo,
+                image: capturedImageData,
+                courseId: course.id,
+                timestamp: new Date().toISOString(),
+              };
+
+              const response = await makeNetworkCall({
+                url: "/Timetables/capture",
+                method: "POST",
+                body: payload,
+              });
+
+              if (response.data.success) {
+                toast.success(
+                  `Timetable captured for student ${matchedStudent.matricNo}`,
+                );
+              } else {
+                throw new Error(response.message || "Capture failed");
+              }
             }
+          } else {
+            throw new Error("No matching student found");
           }
         } else {
-          throw new Error("No matching student found");
+          throw new Error("No student descriptors available for matching");
         }
       } else {
         throw new Error("No face detected in captured image");
@@ -469,6 +464,25 @@ const LiveFeedModal = ({ course, onClose, onCapture }: LiveFeedModalProps) => {
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const stopStreaming = () => {
+    if (streamRef.current) {
+      streamRef.current.getTracks().forEach((track) => track.stop());
+      streamRef.current = null;
+    }
+
+    Object.values(peerConnectionsRef.current).forEach((pc) => pc.close());
+    peerConnectionsRef.current = {};
+
+    if (socketRef.current) {
+      socketRef.current.disconnect();
+      socketRef.current = null;
+    }
+
+    setRoomId("");
+    setViewers([]);
+    setIsStreaming(false);
   };
 
   if (loadingModels) {
@@ -489,7 +503,10 @@ const LiveFeedModal = ({ course, onClose, onCapture }: LiveFeedModalProps) => {
       <div className="bg-white px-5 py-5 rounded-xl w-[90%] max-w-[800px] relative">
         <button
           className="absolute top-4 right-4 text-gray-500 hover:text-gray-700 z-10"
-          onClick={onClose}
+          onClick={() => {
+            stopStreaming();
+            onClose();
+          }}
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -522,6 +539,12 @@ const LiveFeedModal = ({ course, onClose, onCapture }: LiveFeedModalProps) => {
             playsInline
             muted
             className="w-full h-full object-contain"
+            onLoadedMetadata={() => {
+              if (canvasRef.current && videoRef.current) {
+                canvasRef.current.width = videoRef.current.videoWidth;
+                canvasRef.current.height = videoRef.current.videoHeight;
+              }
+            }}
           />
           <canvas
             ref={canvasRef}
@@ -529,7 +552,15 @@ const LiveFeedModal = ({ course, onClose, onCapture }: LiveFeedModalProps) => {
           />
         </div>
 
-        <div className="mt-4 flex justify-center">
+        <div className="mt-4 flex justify-between items-center">
+          <div>
+            {isStreaming && (
+              <span className="flex items-center text-green-600">
+                <span className="w-3 h-3 bg-green-600 rounded-full mr-2"></span>
+                Streaming to {viewers.length} viewer(s)
+              </span>
+            )}
+          </div>
           <BaseButton
             onClick={captureImage}
             disabled={isLoading || !faceCaptured}
@@ -545,7 +576,9 @@ const LiveFeedModal = ({ course, onClose, onCapture }: LiveFeedModalProps) => {
               ? "Processing..."
               : faceCaptured
                 ? "Captured Timetable"
-                : "No Face Detected"}
+                : studentDescriptors.length > 0
+                  ? "No Face Detected"
+                  : "No Students Registered"}
           </BaseButton>
         </div>
       </div>
@@ -565,8 +598,6 @@ const Timetable = ({}: any) => {
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
   const user = useAppSelector((state: RootState) => state.auth.user);
-
-  // State for live class
   const [selectedCourse, setSelectedCourse] = useState<any>(null);
   const [isLiveModalOpen, setIsLiveModalOpen] = useState(false);
 
@@ -715,7 +746,6 @@ const Timetable = ({}: any) => {
         </div>
       </>
 
-      {/* Live Class Modal */}
       {isLiveModalOpen && selectedCourse && (
         <LiveFeedModal
           course={selectedCourse}
