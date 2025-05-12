@@ -93,7 +93,9 @@ const LiveFeedModal = ({ course, onClose, onCapture }: LiveFeedModalProps) => {
                 student.image.type === "Buffer" &&
                 Array.isArray(student.image.data)
               ) {
-                const base64Image = `data:image/jpeg;base64,${Buffer.from(student.image.data).toString("base64")}`;
+                const base64Image = `data:image/jpeg;base64,${Buffer.from(
+                  student.image.data
+                ).toString("base64")}`;
                 const img = await faceapi.fetchImage(base64Image);
                 const detections = await faceapi
                   .detectAllFaces(img, new faceapi.TinyFaceDetectorOptions())
@@ -116,11 +118,11 @@ const LiveFeedModal = ({ course, onClose, onCapture }: LiveFeedModalProps) => {
             } catch (err) {
               console.error(
                 `Error processing image for student ${student.id}:`,
-                err,
+                err
               );
               return null;
             }
-          }),
+          })
         );
 
         console.log("Processed student descriptors:", processedStudents);
@@ -136,7 +138,7 @@ const LiveFeedModal = ({ course, onClose, onCapture }: LiveFeedModalProps) => {
         setStudentDescriptors(validDescriptors);
       } catch (err) {
         setError(
-          "Failed to load face detection models or student images. Please refresh the page.",
+          "Failed to load face detection models or student images. Please refresh the page."
         );
         setLoadingModels(false);
       }
@@ -190,9 +192,28 @@ const LiveFeedModal = ({ course, onClose, onCapture }: LiveFeedModalProps) => {
         const socket = io(process.env.NEXT_PUBLIC_BE_URL!);
         socketRef.current = socket;
 
-        socket.on("room-created", (roomId: RoomCreatedMessage) => {
-          setRoomId(roomId);
-          setIsStreaming(true);
+        socket.on("room-created", async (roomId: any) => {
+          console.log(roomId, '.........................................d')
+          const payload = {
+            roomId,
+            courseId: course.id
+          };
+
+          try {
+            const response = await makeNetworkCall({
+              url: "/attendances/create-stream",
+              method: "POST",
+              body: payload,
+            });
+
+            console.log(response, '....................create stream')
+
+            setRoomId(roomId);
+            setIsStreaming(true);
+          } catch (error) {
+            console.error("Failed to create stream:", error);
+            // Optionally handle the error (e.g., show error message)
+          }
         });
 
         socket.on("new-viewer", (viewerId: NewViewerMessage) => {
@@ -299,7 +320,7 @@ const LiveFeedModal = ({ course, onClose, onCapture }: LiveFeedModalProps) => {
         faceapi.matchDimensions(canvas, displaySize);
         const resizedDetections = faceapi.resizeResults(
           detections,
-          displaySize,
+          displaySize
         );
 
         const context = canvas.getContext("2d");
@@ -318,9 +339,9 @@ const LiveFeedModal = ({ course, onClose, onCapture }: LiveFeedModalProps) => {
                 (desc) =>
                   new faceapi.LabeledFaceDescriptors(desc.matricNo, [
                     desc.descriptor,
-                  ]),
+                  ])
               ),
-              0.4,
+              0.4
             );
 
             const bestMatch = faceMatcher.findBestMatch(capturedDescriptor);
@@ -328,7 +349,7 @@ const LiveFeedModal = ({ course, onClose, onCapture }: LiveFeedModalProps) => {
             if (bestMatch.label !== "unknown") {
               setFaceCaptured(true);
               const matchedStudent = studentDescriptors.find(
-                (desc) => desc.matricNo === bestMatch.label,
+                (desc) => desc.matricNo === bestMatch.label
               );
 
               if (matchedStudent) {
@@ -340,8 +361,6 @@ const LiveFeedModal = ({ course, onClose, onCapture }: LiveFeedModalProps) => {
                   timestamp: new Date().toISOString(),
                 };
 
-                console.log(payload, "student payload.....................");
-
                 const response = await makeNetworkCall({
                   url: "/attendances/capture",
                   method: "POST",
@@ -350,12 +369,11 @@ const LiveFeedModal = ({ course, onClose, onCapture }: LiveFeedModalProps) => {
 
                 if (response.data.success) {
                   toast.success(
-                    `Timetable captured for student ${matchedStudent.matricNo}`,
+                    `Timetable captured for student ${matchedStudent.matricNo}`
                   );
                 } else {
                   toast.warning(
-                    response.data.message ||
-                      "Capture failed. Please try again.",
+                    response.data.message || "Capture failed. Please try again."
                   );
                 }
               }
@@ -413,16 +431,16 @@ const LiveFeedModal = ({ course, onClose, onCapture }: LiveFeedModalProps) => {
               (desc) =>
                 new faceapi.LabeledFaceDescriptors(desc.matricNo, [
                   desc.descriptor,
-                ]),
+                ])
             ),
-            0.4,
+            0.4
           );
 
           const bestMatch = faceMatcher.findBestMatch(capturedDescriptor);
 
           if (bestMatch.label !== "unknown") {
             const matchedStudent = studentDescriptors.find(
-              (desc) => desc.matricNo === bestMatch.label,
+              (desc) => desc.matricNo === bestMatch.label
             );
 
             if (matchedStudent) {
@@ -442,7 +460,7 @@ const LiveFeedModal = ({ course, onClose, onCapture }: LiveFeedModalProps) => {
 
               if (response.data.success) {
                 toast.success(
-                  `Timetable captured for student ${matchedStudent.matricNo}`,
+                  `Timetable captured for student ${matchedStudent.matricNo}`
                 );
               } else {
                 throw new Error(response.message || "Capture failed");
@@ -568,17 +586,17 @@ const LiveFeedModal = ({ course, onClose, onCapture }: LiveFeedModalProps) => {
               isLoading
                 ? "bg-gray-400"
                 : faceCaptured
-                  ? "bg-green-500 hover:bg-green-600"
-                  : "bg-gray-400"
+                ? "bg-green-500 hover:bg-green-600"
+                : "bg-gray-400"
             } text-white`}
           >
             {isLoading
               ? "Processing..."
               : faceCaptured
-                ? "Captured Timetable"
-                : studentDescriptors.length > 0
-                  ? "No Face Detected"
-                  : "No Students Registered"}
+              ? "Captured Timetable"
+              : studentDescriptors.length > 0
+              ? "No Face Detected"
+              : "No Students Registered"}
           </BaseButton>
         </div>
       </div>
@@ -634,7 +652,7 @@ const Timetable = ({}: any) => {
         toast.success(
           studentId
             ? `Timetable captured for student ${studentId}`
-            : "Timetable captured successfully!",
+            : "Timetable captured successfully!"
         );
         closeLiveModal();
       } else {
@@ -726,7 +744,7 @@ const Timetable = ({}: any) => {
                               </button>
                             </td>
                           </tr>
-                        ),
+                        )
                       )}
                     </tbody>
                   </table>
@@ -756,3 +774,4 @@ const Timetable = ({}: any) => {
     </div>
   );
 };
+

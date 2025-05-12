@@ -33,7 +33,7 @@ const WatchPage = () => {
     });
 
     socketRef.current.on("invalid-room", () => {
-      setStatus("Invalid room ID");
+      setStatus("Stream Ended");
     });
 
     socketRef.current.on("broadcaster-disconnected", () => {

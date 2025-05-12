@@ -39,6 +39,20 @@ export const getStudentAttendanceDetails = async (studentId: any) => {
   }
 };
 
+export const getStreams = async () => {
+  try {
+    const response = await makeNetworkCall({
+      url: `/attendances/streams`,
+      method: "GET",
+    });
+
+    return response.data;
+  } catch (err) {
+    const message = errorMessage(err);
+    throw new Error(message ?? "Network error");
+  }
+};
+
 export const getLecturerStudents = async (
   params?: Partial<StudentListParams>,
 ) => {
