@@ -4,9 +4,11 @@ import classNames from "classnames";
 import { useAppDispatch } from "@/reducer/store";
 import EmptyTable from "../emptytable";
 import LoaderIcon from "../icons/LoaderIcon";
-import { getDepartmentAttendances } from "@/services/Attendance";
+import { getDepartmentAttendances, markAttendanceManually } from "@/services/Attendance";
 import { levelOptions, statusOptions, periodOptions } from "@/util/constant";
 import { useRouter } from "next/navigation";
+import { getLecturerStudents } from "@/services/Students.service";
+import { getLecturerCourses } from "@/services/courses.service";
 
 const AttendanceList = () => {
   const dispatch = useAppDispatch();
@@ -20,7 +22,35 @@ const AttendanceList = () => {
   const [showStatus, setShowStatus] = useState(false);
   const [showLevel, setShowLevel] = useState(false);
   const [showPeriod, setShowPeriod] = useState(false);
+  const [showManualModal, setShowManualModal] = useState(false);
+  const [students, setStudents] = useState<any[]>([]);
+  const [courses, setCourses] = useState<any[]>([]);
+  const [selectedStudent, setSelectedStudent] = useState("");
+  const [selectedCourse, setSelectedCourse] = useState("");
+  const [manualStatus, setManualStatus] = useState("present");
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const router = useRouter();
+
+  // Fetch students and courses for the modal
+  useEffect(() => {
+    if (showManualModal) {
+      const fetchData = async () => {
+        try {
+          const [studentsRes, coursesRes] = await Promise.all([
+            getLecturerStudents(),
+            getLecturerCourses({
+              search: "",
+            }),
+          ]);
+          setStudents(studentsRes.students);
+          setCourses(coursesRes.course);
+        } catch (error) {
+          console.error("Failed to fetch data for manual attendance", error);
+        }
+      };
+      fetchData();
+    }
+  }, [showManualModal]);
 
   const handleStatusChange = (value: string) => {
     setSelectedStatus(value);
@@ -77,10 +107,10 @@ const AttendanceList = () => {
     });
     setAttendance((prevAttendances: any) => {
       const existingIds = new Set(
-        prevAttendances.map((attendance: any) => attendance.id),
+        prevAttendances.map((attendance: any) => attendance.id)
       );
       const newAttendances = res.items.filter(
-        (item: any) => !existingIds.has(item.id),
+        (item: any) => !existingIds.has(item.id)
       );
       return [...prevAttendances, ...newAttendances];
     });
@@ -97,6 +127,32 @@ const AttendanceList = () => {
     selectedLevel,
     selectedPeriod,
   ]);
+
+  // Function to handle manual attendance submission
+  const handleManualAttendance = async () => {
+    if (!selectedStudent || !selectedCourse) {
+      alert("Please select both student and course");
+      return;
+    }
+
+    setIsSubmitting(true);
+    try {
+      // Call your API to mark attendance manually
+      await markAttendanceManually({studentId: selectedStudent, courseId: selectedCourse, status: manualStatus});
+
+      // Refresh the attendance list
+      await fetchAttendance();
+      setShowManualModal(false);
+      // Reset form
+      setSelectedStudent("");
+      setSelectedCourse("");
+      setManualStatus("present");
+    } catch (error) {
+      console.error("Failed to mark attendance manually", error);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   return (
     <div className="relative event__list__container">
@@ -233,6 +289,13 @@ const AttendanceList = () => {
             />
             <i className="ri-search-line absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500"></i>
           </div>
+
+          <button
+            onClick={() => setShowManualModal(true)}
+            className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
+          >
+            Mark Attendance
+          </button>
         </div>
       </div>
 
@@ -333,15 +396,93 @@ const AttendanceList = () => {
               "flex flex-col items-center justify-center w-full",
               {
                 "h-full": allAttendances?.items?.length <= 0,
-              },
+              }
             )}
           >
             <LoaderIcon />
           </div>
         )}
       </div>
+
+      {showManualModal && (
+        <>
+          <div className="w-full flex items-center justify-center">
+            <div className="space-y-4 w-[600px] bg-white px-5 rounded-lg z-[10000] py-10">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Student
+                </label>
+                <select
+                  value={selectedStudent}
+                  onChange={(e) => setSelectedStudent(e.target.value)}
+                  className="w-full p-2 border border-gray-300 rounded-md"
+                >
+                  <option value="">Select Student</option>
+                  {students.map((student) => (
+                    <option key={student?.id} value={student?.id}>
+                      {student?.lastname} {student?.firstname} (
+                      {student?.matricNo})
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Course
+                </label>
+                <select
+                  value={selectedCourse}
+                  onChange={(e) => setSelectedCourse(e.target.value)}
+                  className="w-full p-2 border border-gray-300 rounded-md"
+                >
+                  <option value="">Select Course</option>
+                  {courses.map((course) => (
+                    <option key={course?.id} value={course?.id}>
+                      {course?.code} - {course?.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Status
+                </label>
+                <select
+                  value={manualStatus}
+                  onChange={(e) => setManualStatus(e.target.value)}
+                  className="w-full p-2 border border-gray-300 rounded-md"
+                >
+                  <option value="present">Present</option>
+                  <option value="absent">Absent</option>
+                  <option value="late">Late</option>
+                </select>
+              </div>
+
+              <div className="flex justify-end space-x-2 pt-4">
+                <button
+                  onClick={() => setShowManualModal(false)}
+                  className="px-4 py-2 border border-gray-300 rounded-md hover:bg-gray-50"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleManualAttendance}
+                  disabled={isSubmitting || !selectedStudent || !selectedCourse}
+                  className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:bg-blue-300 disabled:cursor-not-allowed"
+                >
+                  {isSubmitting ? "Marking..." : "Mark Attendance"}
+                </button>
+              </div>
+            </div>
+          </div>
+          <div className="bg-black opacity-50 w-screen h-screen fixed top-0 left-0 z-[1000]"></div>
+        </>
+      )}
     </div>
   );
 };
 
 export default AttendanceList;
+

@@ -193,7 +193,6 @@ const LiveFeedModal = ({ course, onClose, onCapture }: LiveFeedModalProps) => {
         socketRef.current = socket;
 
         socket.on("room-created", async (roomId: any) => {
-          console.log(roomId, '.........................................d')
           const payload = {
             roomId,
             courseId: course.id

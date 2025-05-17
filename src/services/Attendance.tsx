@@ -58,3 +58,18 @@ export const getAttendanceDetails = async (id: any) => {
     throw new Error(message ?? "Network error");
   }
 };
+
+export const markAttendanceManually = async (data: any) => {
+  try {
+    const response = await makeNetworkCall({
+      url: `/attendances/manual-attendance`,
+      method: "POST",
+      body: data,
+    });
+
+    return response;
+  } catch (err) {
+    const message = errorMessage(err);
+    throw new Error(message ?? "Network error");
+  }
+};

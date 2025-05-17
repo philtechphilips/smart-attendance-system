@@ -67,7 +67,7 @@ export const ADMIN_SIDEBAR = [
   },
   {
     title: "Stream",
-    url: "/lecturer/timetable/stream",
+    url: "/dashboard/streams",
     icon: "ri-video-ai-line",
   },
 ];
